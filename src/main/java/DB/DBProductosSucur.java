@@ -74,4 +74,18 @@ public class DBProductosSucur extends DB {
             CerrarRecursos();
         }
     }
+    
+    public void modificarBodega(int id, int cantidad) throws SQLException {
+        try {
+            Con = new Conexion("modificador", "modpass");
+            Conn = Con.IniciarConexion();
+            String query = "SELECT gamerprosc.aumentarBodega(?,?)";
+            stmt = Conn.prepareStatement(query);
+            stmt.setInt(1, id);
+            stmt.setInt(2, cantidad);
+            Rs = stmt.executeQuery();
+        } finally {
+            CerrarRecursos();
+        }
+    }
 }

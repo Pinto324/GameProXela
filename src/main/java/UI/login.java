@@ -5,6 +5,7 @@
  */
 package UI;
 import Controladores.CUsuarios;
+import UI.Bodega.PrincipalB;
 import UI.Inventario.PrincipalI;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -258,7 +259,9 @@ public class login extends javax.swing.JFrame {
                             break;
                         //Bodega
                         case 3:
-                            
+                            PrincipalB Bodega = new PrincipalB(info);
+                            Bodega.setVisible(true);
+                            this.setVisible(false);
                             break;
                         //Inventario
                         case 4:

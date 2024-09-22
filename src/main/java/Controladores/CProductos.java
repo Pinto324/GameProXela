@@ -33,4 +33,13 @@ public class CProductos {
         }
         
     }
+    public boolean ingeresoBodega(int id,int cantidad){
+        try{
+            db.modificarBodega(id, cantidad);
+            return true;
+        }catch(SQLException e){
+            return false;
+        }
+        
+    }
 }

@@ -218,6 +218,18 @@ before INSERT ON gamerprosc.productos_sucursal
 FOR EACH ROW
 EXECUTE FUNCTION gamerprosc.actualizarps();
 
+--encargada de modificiar bodega
+CREATE OR REPLACE FUNCTION gamerprosc.aumentarBodega(_id integer,
+    _cantidad integer)
+RETURNS void AS $$
+DECLARE
+  stock_bodega_actual integer;
+BEGIN
+  UPDATE gamerprosc.productos_sucursal 
+  SET stock_bodega = stock_bodega + _cantidad
+  WHERE id=_id;
+END;
+$$ LANGUAGE plpgsql;
 
 --permiso para usar el schema 
 GRANT USAGE ON SCHEMA gamerprosc TO admin;
