@@ -1,10 +1,6 @@
--- Crear usuario administrador con todos los permisos
+-- Usuarios que controlaran la DB
 CREATE USER Admin WITH PASSWORD 'adminpass';
-
--- Crear usuario solo lectura
 CREATE USER lector WITH PASSWORD 'lectorpass';
-
--- Crear usuario para modificar tablas (INSERT, UPDATE, DELETE)
 CREATE USER modificador WITH PASSWORD 'modificador_password';
 
 CREATE DATABASE "GamerProXela"
@@ -17,16 +13,12 @@ CREATE DATABASE "GamerProXela"
 
 CREATE SCHEMA IF NOT EXISTS gamerprosc;
 
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.clientes_nit_seq;
-
 CREATE TABLE IF NOT EXISTS gamerprosc.clientes (
   nit integer NOT NULL PRIMARY KEY,
   nombre varchar,
   tipo smallint,
   puntos integer
 );
-
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.descuentos_id_descuento_seq;
 
 CREATE TABLE IF NOT EXISTS gamerprosc.descuentos (
   id_descuento serial NOT NULL PRIMARY KEY,
@@ -36,8 +28,6 @@ CREATE TABLE IF NOT EXISTS gamerprosc.descuentos (
   fecha date
 );
 
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.detalle_ventas_id_seq;
-
 CREATE TABLE IF NOT EXISTS gamerprosc.detalle_ventas (
   id serial NOT NULL PRIMARY KEY,
   no_factura integer,
@@ -45,8 +35,6 @@ CREATE TABLE IF NOT EXISTS gamerprosc.detalle_ventas (
   cantidad integer,
   precio_u decimal(10, 2)
 );
-
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.empleados_id_seq;
 
 CREATE TABLE IF NOT EXISTS gamerprosc.empleados (
   id serial NOT NULL PRIMARY KEY,
@@ -58,15 +46,11 @@ CREATE TABLE IF NOT EXISTS gamerprosc.empleados (
   no_caja smallint
 );
 
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.productos_id_producto_seq;
-
 CREATE TABLE IF NOT EXISTS gamerprosc.productos (
   id_producto serial NOT NULL PRIMARY KEY,
   nombre varchar,
   precio decimal(10, 2)
 );
-
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.productos_sucursal_id_seq;
 
 CREATE TABLE IF NOT EXISTS gamerprosc.productos_sucursal (
   id serial NOT NULL PRIMARY KEY,
@@ -77,14 +61,10 @@ CREATE TABLE IF NOT EXISTS gamerprosc.productos_sucursal (
   pasillo integer
 );
 
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.sucursales_id_sucursal_seq;
-
 CREATE TABLE IF NOT EXISTS gamerprosc.sucursales (
   id_sucursal serial NOT NULL PRIMARY KEY,
   ubicacion varchar
 );
-
-CREATE SEQUENCE IF NOT EXISTS gamerprosc.ventas_no_factura_seq;
 
 CREATE TABLE IF NOT EXISTS gamerprosc.ventas (
   no_factura serial PRIMARY KEY,
@@ -104,20 +84,55 @@ ALTER TABLE gamerprosc.productos_sucursal ADD CONSTRAINT productos_sucursal_id_s
 ALTER TABLE gamerprosc.ventas ADD CONSTRAINT ventas_id_cajero_fk FOREIGN KEY (id_cajero) REFERENCES gamerprosc.empleados (id);
 ALTER TABLE gamerprosc.ventas ADD CONSTRAINT ventas_nit_cliente_fk FOREIGN KEY (nit_cliente) REFERENCES gamerprosc.clientes (nit);
 
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.clientes_nit_seq;
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.descuentos_id_descuento_seq;
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.detalle_ventas_id_seq;
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.empleados_id_seq;
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.productos_id_producto_seq;
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.productos_sucursal_id_seq;
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.sucursales_id_sucursal_seq;
+CREATE SEQUENCE IF NOT EXISTS gamerprosc.ventas_no_factura_seq;
 
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gamerprosc TO admin;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gamerprosc TO admin;
-
-GRANT USAGE ON SCHEMA gamerprosc TO lector;
-GRANT SELECT ON ALL TABLES IN SCHEMA gamerprosc TO lector;
-
-GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA gamerprosc TO modificador;
 --insert de las sucursales--
 INSERT INTO gamerprosc.sucursales (ubicacion) 
 VALUES 
     ('Parque'),
     ('Centro1'),
     ('Centro2');
+
+INSERT INTO gamerprosc.productos (nombre, precio)
+VALUES
+  ('Consola Xbox Series X', 3899.92),
+  ('Consola PlayStation 5', 3899.92),
+  ('Nintendo Switch OLED', 2729.92),
+  ('Consola Xbox Series S', 2339.92),
+  ('Juego: The Legend of Zelda - Breath of the Wild', 467.92),
+  ('Juego: Elden Ring', 467.92),
+  ('Juego: FIFA 24', 545.92),
+  ('Juego: God of War Ragnarok', 467.92),
+  ('Accesorio: Control Inalámbrico PS5', 545.92),
+  ('Accesorio: Control Inalámbrico Xbox', 467.92);    
+  
+INSERT INTO gamerprosc.productos_sucursal (id_producto, id_sucursal, stock_bodega, stock_estanteria, pasillo)
+VALUES
+  (1, 1, 0, 0, -1),
+  (2, 1, 0, 0, -1),
+  (3, 1, 0, 0, -1),
+  (4, 1, 0, 0, -1),
+  (5, 1, 0, 0, -1),
+  (6, 1, 0, 0, -1),
+  (7, 1, 0, 0, -1),
+  (8, 1, 0, 0, -1),
+  (9, 1, 0, 0, -1),
+  (10, 1, 0, 0, -1);
+
+--Views:
+--Encargada del traer la información para las utilidades de inventario:
+CREATE OR REPLACE VIEW gamerprosc.vista_inventario_rellenarinfo AS
+SELECT ps.id p.nombre, p.precio, ps.id_producto, ps.id_sucursal, ps.stock_bodega, ps.stock_estanteria, ps.pasillo
+FROM gamerprosc.productos p
+JOIN gamerprosc.productos_sucursal ps ON p.id_producto = ps.id_producto
+JOIN gamerprosc.sucursales s ON ps.id_sucursal = s.id_sucursal;
 
 --Funciones:
 CREATE OR REPLACE FUNCTION llenar_estanteria()
@@ -143,3 +158,46 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--encargada del manejo de la view inventario_rellenarinfo
+CREATE OR REPLACE FUNCTION gamerprosc.filtrar_rellenarinfo(_id_sucursal integer)
+RETURNS TABLE(
+	  id_ps integer,
+    nombre varchar,
+    precio decimal(10, 2),
+    id_producto integer,
+    id_sucursal integer,
+    stock_bodega integer,
+    stock_estanteria integer,
+    pasillo integer
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+		    v.id,
+        v.nombre,
+        v.precio,
+        v.id_producto,
+        v.id_sucursal,
+        v.stock_bodega,
+        v.stock_estanteria,
+        v.pasillo
+    FROM 
+        gamerprosc.vista_inventario_rellenarinfo v
+    WHERE
+        v.id_sucursal = _id_sucursal;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM gamerprosc.filtrar_rellenarinfo(1);
+
+--permiso para usar el schema 
+GRANT USAGE ON SCHEMA gamerprosc TO admin;
+GRANT USAGE ON SCHEMA gamerprosc TO lector;
+GRANT USAGE ON SCHEMA gamerprosc TO modificador
+;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gamerprosc TO admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gamerprosc TO admin;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA gamerprosc TO lector;
+
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA gamerprosc TO modificador;

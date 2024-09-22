@@ -59,6 +59,7 @@ public class DBusuarios extends DB {
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 byte[] valorHashCalculado = digest.digest(contra.getBytes());
                 String valorHashCalculadoHex = bytesToHex(valorHashCalculado);
+                System.out.println(valorHashCalculadoHex);
                 String[] info;
                 if (valorHashAlmacenado.equals(valorHashCalculadoHex)) {
                     info = new String[6]; 

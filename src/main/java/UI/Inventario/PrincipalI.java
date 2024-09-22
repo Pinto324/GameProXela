@@ -10,14 +10,15 @@ package UI.Inventario;
  * @author branp
  */
 public class PrincipalI extends javax.swing.JFrame {
-
+    String[] datos;
     /**
      * Creates new form PrincipalI
      * @param datos
      */
-    public PrincipalI(String[] datos) {
+    public PrincipalI(String[] da) {
         initComponents();
         this.setLocationRelativeTo(null);
+        datos = da;
     }
 
     /**
@@ -200,7 +201,7 @@ public class PrincipalI extends javax.swing.JFrame {
 
     private void jPanelRellenarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelRellenarMouseClicked
         this.setVisible(false);
-        RellenarI Rellenar = new RellenarI(this,true);
+        RellenarI Rellenar = new RellenarI(this,true,datos);
         Rellenar.setVisible(true);
         this.setVisible(true);
     }//GEN-LAST:event_jPanelRellenarMouseClicked
