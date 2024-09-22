@@ -21,4 +21,16 @@ public class CProductos {
     public ArrayList<String> Informacionproductos(int sucursal) throws SQLException{
         return db.informacionRellenarSucursal(sucursal);
     }
+    public ArrayList<String> InformacionproductosC(int sucursal) throws SQLException{
+        return db.informacionRellenarSucursalC(sucursal);
+    }
+    public boolean ingeresoEstanterias(int id,int cantidad,int pasillo){
+        try{
+            db.modificarEstanteria(id, cantidad, pasillo);
+            return true;
+        }catch(SQLException e){
+            return false;
+        }
+        
+    }
 }

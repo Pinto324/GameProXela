@@ -39,6 +39,7 @@ public class PrincipalI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanelInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -116,6 +117,11 @@ public class PrincipalI extends javax.swing.JFrame {
         );
 
         jPanelInfo.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelInfo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanelInfoMouseClicked(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 204, 255));
@@ -129,11 +135,13 @@ public class PrincipalI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelInfoLayout.setVerticalGroup(
             jPanelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelInfoLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1))
         );
 
@@ -206,6 +214,13 @@ public class PrincipalI extends javax.swing.JFrame {
         this.setVisible(true);
     }//GEN-LAST:event_jPanelRellenarMouseClicked
 
+    private void jPanelInfoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelInfoMouseClicked
+        this.setVisible(false);
+        InformacionI Rellenar = new InformacionI(this,true,datos);
+        Rellenar.setVisible(true);
+        this.setVisible(true);
+    }//GEN-LAST:event_jPanelInfoMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnSalir;
@@ -213,6 +228,7 @@ public class PrincipalI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanelFondo;

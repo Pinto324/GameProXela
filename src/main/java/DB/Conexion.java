@@ -64,7 +64,6 @@ public class Conexion {
 
             // Establecer la conexión
             Conexion = DriverManager.getConnection(URLuser, Nick, Pass);
-            System.out.println("Conexión exitosa a la base de datos PostgreSQL!");
         }catch(SQLException e){
              System.out.println("Error al abrir Conexión: " + e.getMessage());   
         } catch (ClassNotFoundException ex) {

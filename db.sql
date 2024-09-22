@@ -1,7 +1,7 @@
 -- Usuarios que controlaran la DB
 CREATE USER Admin WITH PASSWORD 'adminpass';
 CREATE USER lector WITH PASSWORD 'lectorpass';
-CREATE USER modificador WITH PASSWORD 'modificador_password';
+CREATE USER modificador WITH PASSWORD 'modpass';
 
 CREATE DATABASE "GamerProXela"
     WITH
@@ -102,16 +102,16 @@ VALUES
 
 INSERT INTO gamerprosc.productos (nombre, precio)
 VALUES
-  ('Consola Xbox Series X', 3899.92),
-  ('Consola PlayStation 5', 3899.92),
-  ('Nintendo Switch OLED', 2729.92),
-  ('Consola Xbox Series S', 2339.92),
-  ('Juego: The Legend of Zelda - Breath of the Wild', 467.92),
-  ('Juego: Elden Ring', 467.92),
-  ('Juego: FIFA 24', 545.92),
-  ('Juego: God of War Ragnarok', 467.92),
-  ('Accesorio: Control Inalámbrico PS5', 545.92),
-  ('Accesorio: Control Inalámbrico Xbox', 467.92);    
+  ('Consola Xbox Series X', 3899),
+  ('Consola PlayStation 5', 3899),
+  ('Nintendo Switch OLED', 2729),
+  ('Consola Xbox Series S', 2339),
+  ('Juego: The Legend of Zelda - Breath of the Wild', 467),
+  ('Juego: Elden Ring', 467),
+  ('Juego: FIFA 24', 545),
+  ('Juego: God of War Ragnarok', 467),
+  ('Accesorio: Control Inalámbrico PS5', 545),
+  ('Accesorio: Control Inalámbrico Xbox', 467);    
   
 INSERT INTO gamerprosc.productos_sucursal (id_producto, id_sucursal, stock_bodega, stock_estanteria, pasillo)
 VALUES
@@ -190,14 +190,43 @@ $$ LANGUAGE plpgsql;
 
 SELECT * FROM gamerprosc.filtrar_rellenarinfo(1);
 
+--encargada de verificar que hayan suficientes productos en bodega y eliminar para mover a estanteria
+CREATE OR REPLACE FUNCTION gamerprosc.actualizarinventario(_id integer,
+    _cantidad integer, _pasillo integer)
+RETURNS void AS $$
+DECLARE
+  stock_bodega_actual integer;
+BEGIN
+  SELECT stock_bodega INTO stock_bodega_actual FROM gamerprosc.productos_sucursal WHERE id=_id;
+  IF _cantidad > stock_bodega_actual THEN
+    RAISE EXCEPTION 'cantidad insuficiente, actualmente solo hay %',v.stock_bodega;
+  END IF;
+  UPDATE gamerprosc.productos_sucursal 
+  SET stock_bodega = stock_bodega - _cantidad
+  WHERE id=_id;
+  UPDATE gamerprosc.productos_sucursal 
+  SET stock_estanteria = stock_estanteria + _cantidad
+  WHERE id=_id;
+  UPDATE gamerprosc.productos_sucursal 
+  SET pasillo = _pasillo
+  WHERE id=_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_actualizar
+before INSERT ON gamerprosc.productos_sucursal
+FOR EACH ROW
+EXECUTE FUNCTION gamerprosc.actualizarps();
+
+
 --permiso para usar el schema 
 GRANT USAGE ON SCHEMA gamerprosc TO admin;
 GRANT USAGE ON SCHEMA gamerprosc TO lector;
-GRANT USAGE ON SCHEMA gamerprosc TO modificador
-;
+GRANT USAGE ON SCHEMA gamerprosc TO modificador;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gamerprosc TO admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gamerprosc TO admin;
 
 GRANT SELECT ON ALL TABLES IN SCHEMA gamerprosc TO lector;
 
-GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA gamerprosc TO modificador;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA gamerprosc TO modificador;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gamerprosc TO modificador;

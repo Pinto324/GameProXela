@@ -17,11 +17,12 @@ main\main.class
 DB\DBClientes.class
 UI\Cajero\ClientesCreate.class
 UI\login$4.class
-UI\Inventario\RellenarI$2$1.class
+DB\DBProductosSucur.class
 UI\login$2.class
 UI\Inventario\PrincipalI$2.class
 DB\DBusuarios.class
 DB\DB.class
+Controladores\CProductos.class
 Controladores\CUsuarios.class
 UI\Inventario\RellenarI$1.class
 UI\Inventario\RellenarI.class
@@ -29,4 +30,5 @@ UI\Utilidades$1.class
 UI\Inventario\PrincipalI$3.class
 UI\login$5.class
 UI\Cajero\ClientesCreate$1.class
+UI\Inventario\RellenarI$3.class
 Controladores\CClientes.class
