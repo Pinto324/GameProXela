@@ -18,7 +18,7 @@ import java.sql.Statement;
 public class Conexion {
     private String Nick;
     private String Pass;
-    private final String URLuser = "jdbc:postgresql://localhost:5433/GamerProXela";
+    private final String URLuser = "jdbc:postgresql://localhost:5432/GamerProXela";
     private ResultSet Rs;
     private Statement s;
     private Connection Conexion;
