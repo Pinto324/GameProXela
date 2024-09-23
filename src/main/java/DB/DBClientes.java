@@ -5,7 +5,9 @@
  */
 package DB;
 
+import Objetos.clientes;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -48,6 +50,47 @@ public class DBClientes extends DB {
                 stmt.setDate(5, new java.sql.Date(System.currentTimeMillis()));
             }
             Rs = stmt.executeQuery();
+        }finally {
+            CerrarRecursos();
+        }
+    }
+    
+public void modificarCliente(int id, String nombre, int nit, boolean tarjeta) throws SQLException {
+    try {
+        Con = new Conexion("modificador", "modpass");
+        Conn = Con.IniciarConexion();
+        String query = tarjeta ? "SELECT gamerprosc.actualizar_cliente_con_tarjeta(?, ?, ?)" : "SELECT gamerprosc.actualizar_cliente_sin_tarjeta(?, ?, ?, ?, ?)";
+        stmt = Conn.prepareStatement(query);        
+        stmt.setInt(1, nit);
+        stmt.setString(2, nombre);
+        if(tarjeta){
+            stmt.setInt(3, id);
+        }else{
+            stmt.setInt(3, 1);
+            stmt.setDate(4, new java.sql.Date(System.currentTimeMillis()));
+            stmt.setInt(5, id);
+        }
+        stmt.executeUpdate();
+    } finally {
+        CerrarRecursos();
+    }
+}
+
+    
+    public ArrayList<clientes> informacionClientes() throws SQLException {
+        try {
+            Con = new Conexion("lector", "lectorpass");
+            Conn = Con.IniciarConexion();
+            String query = "SELECT * FROM gamerprosc.vista_modificar_clientes";
+            stmt = Conn.prepareStatement(query);
+            Rs = stmt.executeQuery();
+            ArrayList<clientes> Info = new ArrayList();
+            while(Rs.next()){
+                clientes dato = new clientes(Rs.getString("id_cliente"),Rs.getString("nit"),Rs.getString("nombre"),Rs.getString("tipo_tarjeta"),"","");
+                Info.add(dato);
+            }
+            CerrarRecursos();
+            return Info;
         }finally {
             CerrarRecursos();
         }

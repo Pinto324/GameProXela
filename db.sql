@@ -1,11 +1,11 @@
 -- Usuarios que controlaran la DB
-CREATE USER Admin WITH PASSWORD 'adminpass';
+CREATE USER admin WITH PASSWORD 'adminpass';
 CREATE USER lector WITH PASSWORD 'lectorpass';
 CREATE USER modificador WITH PASSWORD 'modpass';
 
 CREATE DATABASE "GamerProXela"
     WITH
-    OWNER = "Admin"
+    OWNER = "admin"
     ENCODING = 'UTF8'
     LOCALE_PROVIDER = 'libc'
     CONNECTION LIMIT = -1
@@ -123,7 +123,7 @@ VALUES
 --Views:
 --Encargada del traer la información para las utilidades de inventario:
 CREATE OR REPLACE VIEW gamerprosc.vista_inventario_rellenarinfo AS
-SELECT ps.id p.nombre, p.precio, ps.id_producto, ps.id_sucursal, ps.stock_bodega, ps.stock_estanteria, ps.pasillo
+SELECT ps.id, p.nombre, p.precio, ps.id_producto, ps.id_sucursal, ps.stock_bodega, ps.stock_estanteria, ps.pasillo
 FROM gamerprosc.productos p
 JOIN gamerprosc.productos_sucursal ps ON p.id_producto = ps.id_producto
 JOIN gamerprosc.sucursales s ON ps.id_sucursal = s.id_sucursal;
@@ -131,6 +131,11 @@ JOIN gamerprosc.sucursales s ON ps.id_sucursal = s.id_sucursal;
 --Encargada de mostrar solo nits de clientes:
 CREATE OR REPLACE VIEW gamerprosc.vista_nit_clientes AS
 SELECT nit
+FROM gamerprosc.clientes;
+
+--Encargada de darme los datos para modificar clientes:
+CREATE OR REPLACE VIEW gamerprosc.vista_modificar_clientes AS
+SELECT id_cliente, nit, nombre, tipo_tarjeta
 FROM gamerprosc.clientes;
 -----------------------------------------------------------------------
 --Funciones:
@@ -245,6 +250,40 @@ BEFORE INSERT OR UPDATE ON gamerprosc.clientes
 FOR EACH ROW
 EXECUTE FUNCTION gamerprosc.verificar_nit_cliente();
 
+---Encargada de actualizar información de un cliente sin tarjeta previa
+CREATE OR REPLACE FUNCTION gamerprosc.actualizar_cliente_sin_tarjeta(
+    p_id_cliente INT,
+    p_nombre VARCHAR,
+    p_nit INT,
+    p_tipo_tarjeta SMALLINT,
+    p_fecha_tarjeta DATE
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE gamerprosc.clientes
+    SET 
+        nit = p_nit,
+        nombre = p_nombre,
+        tipo_tarjeta = p_tipo_tarjeta,
+        fecha_tarjeta = p_fecha_tarjeta
+    WHERE id_cliente = p_id_cliente;
+END;
+$$ LANGUAGE plpgsql;
+---Encargada de actualizar información de un cliente con tarjeta previa
+CREATE OR REPLACE FUNCTION gamerprosc.actualizar_cliente_con_tarjeta(
+    p_id_cliente INT,
+    p_nombre VARCHAR,
+    p_nit INT
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE gamerprosc.clientes
+    SET 
+        nit = p_nit,
+        nombre = p_nombre
+    WHERE id_cliente = p_id_cliente;
+END;
+$$ LANGUAGE plpgsql;
 
 --permiso para usar el schema 
 GRANT USAGE ON SCHEMA gamerprosc TO admin;

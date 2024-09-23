@@ -6,6 +6,7 @@
 package UI.Cajero;
 
 import Controladores.CClientes;
+import Objetos.clientes;
 import UI.Utilidades;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -18,7 +19,7 @@ public class ModificarCliente extends javax.swing.JDialog {
 
     CClientes controlador = new CClientes();
     String[] datos;
-    ArrayList<String> info;
+    ArrayList<clientes> info;
 
     /**
      * Creates new form RellenarI
@@ -29,6 +30,9 @@ public class ModificarCliente extends javax.swing.JDialog {
         this.setLocationRelativeTo(null);
         Utilidades.SoloNumeros(jTextFieldNit);
         datos = da;
+        llenarcombo();
+        jPanelModificar.setVisible(false);
+        jLabel8.setVisible(false);
     }
 
     /**
@@ -46,7 +50,7 @@ public class ModificarCliente extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
+        jPanelbuscar = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jTextFieldJNombre = new javax.swing.JTextField();
@@ -54,6 +58,8 @@ public class ModificarCliente extends javax.swing.JDialog {
         jCheckBox1 = new javax.swing.JCheckBox();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
+        jPanelModificar = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -101,12 +107,13 @@ public class ModificarCliente extends javax.swing.JDialog {
         jLabel4.setText("Nit");
         jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 70, -1, -1));
 
-        jPanel3.setBackground(new java.awt.Color(102, 204, 255));
-        jPanel3.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        jPanelbuscar.setBackground(new java.awt.Color(102, 204, 255));
+        jPanelbuscar.setForeground(new java.awt.Color(255, 255, 255));
+        jPanelbuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanelbuscar.setEnabled(false);
+        jPanelbuscar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel3MouseClicked(evt);
+                jPanelbuscarMouseClicked(evt);
             }
         });
 
@@ -114,30 +121,31 @@ public class ModificarCliente extends javax.swing.JDialog {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Buscar");
         jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel5.setEnabled(false);
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel5MouseClicked(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelbuscarLayout = new javax.swing.GroupLayout(jPanelbuscar);
+        jPanelbuscar.setLayout(jPanelbuscarLayout);
+        jPanelbuscarLayout.setHorizontalGroup(
+            jPanelbuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelbuscarLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanelbuscarLayout.setVerticalGroup(
+            jPanelbuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelbuscarLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, -1, -1));
+        jPanel2.add(jPanelbuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(102, 204, 255));
@@ -163,12 +171,59 @@ public class ModificarCliente extends javax.swing.JDialog {
         });
         jPanel2.add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 170, -1, -1));
 
+        jComboBox1.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                jComboBox1PopupMenuWillBecomeVisible(evt);
+            }
+        });
         jPanel2.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 200, -1));
 
         jLabel7.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(102, 204, 255));
         jLabel7.setText("Nombre del cliente");
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 0, -1, 28));
+
+        jPanelModificar.setBackground(new java.awt.Color(102, 204, 255));
+        jPanelModificar.setForeground(new java.awt.Color(255, 255, 255));
+        jPanelModificar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanelModificar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanelModificarMouseClicked(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Modificar");
+        jLabel8.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel8MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelModificarLayout = new javax.swing.GroupLayout(jPanelModificar);
+        jPanelModificar.setLayout(jPanelModificarLayout);
+        jPanelModificarLayout.setHorizontalGroup(
+            jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelModificarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanelModificarLayout.setVerticalGroup(
+            jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelModificarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.add(jPanelModificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 190, -1, -1));
 
         jPanelFondo.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, 500, 260));
 
@@ -208,12 +263,12 @@ public class ModificarCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-        funcionamientoBoton();
+        funcionamientoBotonBuscar();
     }//GEN-LAST:event_jLabel5MouseClicked
 
-    private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
-        funcionamientoBoton();
-    }//GEN-LAST:event_jPanel3MouseClicked
+    private void jPanelbuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelbuscarMouseClicked
+        funcionamientoBotonBuscar();
+    }//GEN-LAST:event_jPanelbuscarMouseClicked
 
     private void jTextFieldJNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldJNombreActionPerformed
         // TODO add your handling code here:
@@ -222,28 +277,47 @@ public class ModificarCliente extends javax.swing.JDialog {
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox1ActionPerformed
-    public void funcionamientoBoton(){
-        if (!(jTextFieldJNombre.getText().equals("")) && !(jTextFieldNit.getText().equals(""))) {   
-            int tarjeta = jCheckBox1.isSelected() ? 1 : 0;
-            if (controlador.ingeresoClientes(jTextFieldJNombre.getText(),Integer.valueOf(jTextFieldNit.getText()),tarjeta)) {
-                JOptionPane.showMessageDialog(null, "se ingreso el usuario correctamente", "aviso", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "El nit ingresado ya está en usuario en el sistema.", "error", JOptionPane.ERROR_MESSAGE);
-            }
+
+    private void jComboBox1PopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jComboBox1PopupMenuWillBecomeVisible
+        jPanelbuscar.setEnabled(true);
+        jLabel5.setEnabled(true);
+    }//GEN-LAST:event_jComboBox1PopupMenuWillBecomeVisible
+
+    private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel8MouseClicked
+
+    private void jPanelModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelModificarMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanelModificarMouseClicked
+    public void llenarcombo(){
+        info = controlador.buscarClientes();
+        for(int i = 0; i<info.size();i++){
+            jComboBox1.addItem(info.get(i).getNit()+" "+info.get(i).getNombre());
+        }
+    }
+    
+    public void funcionamientoBotonBuscar() {
+        jTextFieldJNombre.setText(info.get(jComboBox1.getSelectedIndex()).getNombre());
+        jTextFieldNit.setText(info.get(jComboBox1.getSelectedIndex()).getNit());
+        if(info.get(jComboBox1.getSelectedIndex()).getTipoTarjeta().equals("0")){
+            jCheckBox1.setEnabled(true);
+        }
+        jTextFieldJNombre.setEnabled(true);
+        jTextFieldNit.setEnabled(true);
+        jPanelModificar.setVisible(false);
+        jLabel8.setVisible(false);
+        jComboBox1.setEnabled(false);
+    }
+    
+    public void funcionamientoBotonBuscardsa() {
+        if (true) {
+            JOptionPane.showMessageDialog(null, "se ingreso el usuario correctamente", "aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "Un campo está vacio", "Error", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El nit ingresado ya está en usuario en el sistema.", "error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public int id(String producto) {
-        for (int i = 1; i < info.size(); i += 2) {
-            if(info.get(i).equals(producto)){
-                return Integer.valueOf(info.get(i-1));
-            }
-            
-        }
-        return -1;
-    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -256,10 +330,12 @@ public class ModificarCliente extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanelFondo;
+    private javax.swing.JPanel jPanelModificar;
+    private javax.swing.JPanel jPanelbuscar;
     private javax.swing.JTextField jTextFieldJNombre;
     private javax.swing.JTextField jTextFieldNit;
     // End of variables declaration//GEN-END:variables

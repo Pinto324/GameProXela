@@ -6,7 +6,9 @@
 package Controladores;
 
 import DB.DBClientes;
+import Objetos.clientes;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -25,5 +27,18 @@ public class CClientes {
         }catch(SQLException e){
             return false;
         }      
+    }
+    
+    public boolean modificarCliente(int id,String Nombre, int nit, boolean tarjeta){
+        try{
+            db.modificarCliente(id,Nombre,nit,tarjeta);
+            return true;
+        }catch(SQLException e){
+            return false;
+        }      
+    }
+    
+    public ArrayList<clientes> buscarClientes(){
+        try{return db.informacionClientes();}catch(SQLException e){return null;}
     }
 }
