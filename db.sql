@@ -14,18 +14,12 @@ CREATE DATABASE "GamerProXela"
 CREATE SCHEMA IF NOT EXISTS gamerprosc;
 
 CREATE TABLE IF NOT EXISTS gamerprosc.clientes (
-  nit integer NOT NULL PRIMARY KEY,
+  id_cliente serial NOT NULL PRIMARY KEY,
+  nit integer,
   nombre varchar,
-  tipo smallint,
-  puntos integer
-);
-
-CREATE TABLE IF NOT EXISTS gamerprosc.descuentos (
-  id_descuento serial NOT NULL PRIMARY KEY,
-  nit_cliente integer,
-  puntos_usados integer,
-  valor_descuento decimal(10, 2),
-  fecha date
+  tipo_tarjeta smallint,
+  puntos integer,
+  fecha_tarjeta date
 );
 
 CREATE TABLE IF NOT EXISTS gamerprosc.detalle_ventas (
@@ -69,20 +63,20 @@ CREATE TABLE IF NOT EXISTS gamerprosc.sucursales (
 CREATE TABLE IF NOT EXISTS gamerprosc.ventas (
   no_factura serial PRIMARY KEY,
   fecha date,
-  nit_cliente integer,
+  id_cliente integer,
   id_cajero integer,
   total_sind decimal(10, 2),
+  descuento integer,
   total_cond decimal(10, 2)
 );
 
-ALTER TABLE gamerprosc.descuentos ADD CONSTRAINT descuentos_nit_cliente_fk FOREIGN KEY (nit_cliente) REFERENCES gamerprosc.clientes (nit);
 ALTER TABLE gamerprosc.detalle_ventas ADD CONSTRAINT detalle_ventas_id_producto_fk FOREIGN KEY (id_producto) REFERENCES gamerprosc.productos (id_producto);
 ALTER TABLE gamerprosc.detalle_ventas ADD CONSTRAINT detalle_ventas_no_factura_fk FOREIGN KEY (no_factura) REFERENCES gamerprosc.ventas (no_factura);
 ALTER TABLE gamerprosc.empleados ADD CONSTRAINT empleados_id_sucursal_fk FOREIGN KEY (id_sucursal) REFERENCES gamerprosc.sucursales (id_sucursal);
 ALTER TABLE gamerprosc.productos_sucursal ADD CONSTRAINT productos_sucursal_id_producto_fk FOREIGN KEY (id_producto) REFERENCES gamerprosc.productos (id_producto);
 ALTER TABLE gamerprosc.productos_sucursal ADD CONSTRAINT productos_sucursal_id_sucursal_fk FOREIGN KEY (id_sucursal) REFERENCES gamerprosc.sucursales (id_sucursal);
 ALTER TABLE gamerprosc.ventas ADD CONSTRAINT ventas_id_cajero_fk FOREIGN KEY (id_cajero) REFERENCES gamerprosc.empleados (id);
-ALTER TABLE gamerprosc.ventas ADD CONSTRAINT ventas_nit_cliente_fk FOREIGN KEY (nit_cliente) REFERENCES gamerprosc.clientes (nit);
+ALTER TABLE gamerprosc.ventas ADD CONSTRAINT ventas_id_cliente_fk FOREIGN KEY (id_cliente) REFERENCES gamerprosc.clientes (id_cliente);
 
 CREATE SEQUENCE IF NOT EXISTS gamerprosc.clientes_nit_seq;
 CREATE SEQUENCE IF NOT EXISTS gamerprosc.descuentos_id_descuento_seq;
@@ -125,7 +119,7 @@ VALUES
   (8, 1, 0, 0, -1),
   (9, 1, 0, 0, -1),
   (10, 1, 0, 0, -1);
-
+-----------------------------------------------------------------------
 --Views:
 --Encargada del traer la información para las utilidades de inventario:
 CREATE OR REPLACE VIEW gamerprosc.vista_inventario_rellenarinfo AS
@@ -134,6 +128,11 @@ FROM gamerprosc.productos p
 JOIN gamerprosc.productos_sucursal ps ON p.id_producto = ps.id_producto
 JOIN gamerprosc.sucursales s ON ps.id_sucursal = s.id_sucursal;
 
+--Encargada de mostrar solo nits de clientes:
+CREATE OR REPLACE VIEW gamerprosc.vista_nit_clientes AS
+SELECT nit
+FROM gamerprosc.clientes;
+-----------------------------------------------------------------------
 --Funciones:
 CREATE OR REPLACE FUNCTION llenar_estanteria()
 RETURNS TRIGGER AS $$
@@ -213,11 +212,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_actualizar
-before INSERT ON gamerprosc.productos_sucursal
-FOR EACH ROW
-EXECUTE FUNCTION gamerprosc.actualizarps();
-
 --encargada de modificiar bodega
 CREATE OR REPLACE FUNCTION gamerprosc.aumentarBodega(_id integer,
     _cantidad integer)
@@ -231,6 +225,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--encargada de verificar que hayan suficientes productos en bodega y eliminar para mover a estanteria
+CREATE OR REPLACE FUNCTION gamerprosc.verificar_nit_cliente()
+RETURNS trigger AS $$
+DECLARE
+  nit_existente integer;
+BEGIN
+  SELECT nit INTO nit_existente FROM gamerprosc.vista_nit_clientes WHERE nit = NEW.nit;
+  IF FOUND THEN
+    RAISE EXCEPTION 'El NIT % ya existe', NEW.nit;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- encargada del trigger para la tabla clientes
+CREATE TRIGGER trigger_verificar_nit
+BEFORE INSERT OR UPDATE ON gamerprosc.clientes
+FOR EACH ROW
+EXECUTE FUNCTION gamerprosc.verificar_nit_cliente();
+
+
 --permiso para usar el schema 
 GRANT USAGE ON SCHEMA gamerprosc TO admin;
 GRANT USAGE ON SCHEMA gamerprosc TO lector;
@@ -241,4 +256,5 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gamerprosc TO admin;
 GRANT SELECT ON ALL TABLES IN SCHEMA gamerprosc TO lector;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA gamerprosc TO modificador;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gamerprosc TO modificador;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gamerprosc TO modificador;

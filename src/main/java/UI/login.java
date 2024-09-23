@@ -6,6 +6,7 @@
 package UI;
 import Controladores.CUsuarios;
 import UI.Bodega.PrincipalB;
+import UI.Cajero.PrincipalC;
 import UI.Inventario.PrincipalI;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -255,7 +256,9 @@ public class login extends javax.swing.JFrame {
                             break;
                         //Cajero
                         case 2:
-                            
+                            PrincipalC Cajero = new PrincipalC(info);
+                            Cajero.setVisible(true);
+                            this.setVisible(false);
                             break;
                         //Bodega
                         case 3:

@@ -5,17 +5,22 @@
  */
 package UI.Cajero;
 
+import UI.Inventario.*;
+
 /**
  *
  * @author branp
  */
 public class PrincipalC extends javax.swing.JFrame {
-
+    String[] datos;
     /**
-     * Creates new form Principal
+     * Creates new form PrincipalI
+     * @param datos
      */
-    public PrincipalC() {
+    public PrincipalC(String[] da) {
         initComponents();
+        this.setLocationRelativeTo(null);
+        datos = da;
     }
 
     /**
@@ -27,58 +32,210 @@ public class PrincipalC extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanelFondo = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        BtnSalir = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanelInfo3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanelingreso = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jPanelInfo5 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setLocationByPlatform(true);
+        setUndecorated(true);
+        setResizable(false);
+
+        jPanelFondo.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
+        BtnSalir.setBackground(new java.awt.Color(255, 255, 255));
+        BtnSalir.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        BtnSalir.setForeground(new java.awt.Color(25, 118, 211));
+        BtnSalir.setText("Salir");
+        BtnSalir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BtnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnSalirActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(BtnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 395, Short.MAX_VALUE)
+                .addComponent(BtnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jPanelFondo.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 434));
+
+        jPanel3.setBackground(new java.awt.Color(102, 204, 255));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("X");
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 0, 40, 29));
+
+        jPanelInfo3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelInfo3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanelInfo3MouseClicked(evt);
+            }
+        });
+
+        jLabel1.setText("Ventas");
+
+        javax.swing.GroupLayout jPanelInfo3Layout = new javax.swing.GroupLayout(jPanelInfo3);
+        jPanelInfo3.setLayout(jPanelInfo3Layout);
+        jPanelInfo3Layout.setHorizontalGroup(
+            jPanelInfo3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelInfo3Layout.createSequentialGroup()
+                .addGap(136, 136, 136)
+                .addComponent(jLabel1)
+                .addContainerGap(159, Short.MAX_VALUE))
+        );
+        jPanelInfo3Layout.setVerticalGroup(
+            jPanelInfo3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelInfo3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addContainerGap(148, Short.MAX_VALUE))
+        );
+
+        jPanel3.add(jPanelInfo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 330, 170));
+
+        jPanelingreso.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelingreso.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanelingresoMouseClicked(evt);
+            }
+        });
+
+        jLabel3.setText("Ingresar clientes");
+
+        javax.swing.GroupLayout jPanelingresoLayout = new javax.swing.GroupLayout(jPanelingreso);
+        jPanelingreso.setLayout(jPanelingresoLayout);
+        jPanelingresoLayout.setHorizontalGroup(
+            jPanelingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelingresoLayout.createSequentialGroup()
+                .addContainerGap(127, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(118, 118, 118))
+        );
+        jPanelingresoLayout.setVerticalGroup(
+            jPanelingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelingresoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addContainerGap(148, Short.MAX_VALUE))
+        );
+
+        jPanel3.add(jPanelingreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 60, 330, 170));
+
+        jPanelInfo5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelInfo5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanelInfo5MouseClicked(evt);
+            }
+        });
+
+        jLabel4.setText("Modificar Cliente");
+
+        javax.swing.GroupLayout jPanelInfo5Layout = new javax.swing.GroupLayout(jPanelInfo5);
+        jPanelInfo5.setLayout(jPanelInfo5Layout);
+        jPanelInfo5Layout.setHorizontalGroup(
+            jPanelInfo5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelInfo5Layout.createSequentialGroup()
+                .addContainerGap(121, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addGap(118, 118, 118))
+        );
+        jPanelInfo5Layout.setVerticalGroup(
+            jPanelInfo5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelInfo5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addContainerGap(148, Short.MAX_VALUE))
+        );
+
+        jPanel3.add(jPanelInfo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 260, 330, 170));
+
+        jPanelFondo.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 0, 730, 460));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 865, Short.MAX_VALUE)
+            .addComponent(jPanelFondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 369, Short.MAX_VALUE)
+            .addComponent(jPanelFondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PrincipalC.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PrincipalC.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PrincipalC.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PrincipalC.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
+    private void BtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSalirActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PrincipalC().setVisible(true);
-            }
-        });
+    }//GEN-LAST:event_BtnSalirActionPerformed
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        System.exit(0);
+    }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jPanelInfo3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelInfo3MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanelInfo3MouseClicked
+
+    private void jPanelingresoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelingresoMouseClicked
+        funcionIngreso();
+    }//GEN-LAST:event_jPanelingresoMouseClicked
+
+    private void jPanelInfo5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelInfo5MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanelInfo5MouseClicked
+
+    public void funcionIngreso(){
+        this.setVisible(false);
+        ingresarCliente ingreso = new ingresarCliente(this,true,datos);
+        ingreso.setVisible(true);
+        this.setVisible(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnSalir;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanelFondo;
+    private javax.swing.JPanel jPanelInfo3;
+    private javax.swing.JPanel jPanelInfo5;
+    private javax.swing.JPanel jPanelingreso;
     // End of variables declaration//GEN-END:variables
 }

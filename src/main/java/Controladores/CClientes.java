@@ -5,10 +5,25 @@
  */
 package Controladores;
 
+import DB.DBClientes;
+import java.sql.SQLException;
+
 /**
  *
  * @author branp
  */
 public class CClientes {
+    DBClientes db = new DBClientes();
     
+    public CClientes() {
+    }
+    
+    public boolean ingeresoClientes(String Nombre, int nit, int tarjeta){
+        try{
+            db.InsertarCliente(Nombre,nit,tarjeta);
+            return true;
+        }catch(SQLException e){
+            return false;
+        }      
+    }
 }
