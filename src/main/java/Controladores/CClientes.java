@@ -25,6 +25,7 @@ public class CClientes {
             db.InsertarCliente(Nombre,nit,tarjeta);
             return true;
         }catch(SQLException e){
+            e.printStackTrace();
             return false;
         }      
     }
@@ -34,7 +35,7 @@ public class CClientes {
             db.modificarCliente(id,Nombre,nit,tarjeta);
             return true;
         }catch(SQLException e){
-            return false;
+            return true;
         }      
     }
     

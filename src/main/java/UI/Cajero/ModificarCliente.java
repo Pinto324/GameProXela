@@ -20,19 +20,19 @@ public class ModificarCliente extends javax.swing.JDialog {
     CClientes controlador = new CClientes();
     String[] datos;
     ArrayList<clientes> info;
-
+    java.awt.Frame parents;
     /**
      * Creates new form RellenarI
      */
     public ModificarCliente(java.awt.Frame parent, boolean modal, String[] da) {
         super(parent, modal);
+        parents =parent;
         initComponents();
         this.setLocationRelativeTo(null);
         Utilidades.SoloNumeros(jTextFieldNit);
         datos = da;
-        llenarcombo();
-        jPanelModificar.setVisible(false);
-        jLabel8.setVisible(false);
+        llenarcombo();    
+        estadoinicial();
     }
 
     /**
@@ -284,41 +284,62 @@ public class ModificarCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_jComboBox1PopupMenuWillBecomeVisible
 
     private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
-        // TODO add your handling code here:
+        funcionamientoBotonModificar();
     }//GEN-LAST:event_jLabel8MouseClicked
 
     private void jPanelModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelModificarMouseClicked
-        // TODO add your handling code here:
+        funcionamientoBotonModificar();
     }//GEN-LAST:event_jPanelModificarMouseClicked
-    public void llenarcombo(){
+    public void llenarcombo() {
         info = controlador.buscarClientes();
-        for(int i = 0; i<info.size();i++){
-            jComboBox1.addItem(info.get(i).getNit()+" "+info.get(i).getNombre());
+        for (int i = 0; i < info.size(); i++) {
+            jComboBox1.addItem(info.get(i).getNit() + " " + info.get(i).getNombre());
         }
     }
-    
+
     public void funcionamientoBotonBuscar() {
         jTextFieldJNombre.setText(info.get(jComboBox1.getSelectedIndex()).getNombre());
         jTextFieldNit.setText(info.get(jComboBox1.getSelectedIndex()).getNit());
-        if(info.get(jComboBox1.getSelectedIndex()).getTipoTarjeta().equals("0")){
+        if (info.get(jComboBox1.getSelectedIndex()).getTipoTarjeta().equals("0")) {
             jCheckBox1.setEnabled(true);
         }
         jTextFieldJNombre.setEnabled(true);
         jTextFieldNit.setEnabled(true);
-        jPanelModificar.setVisible(false);
-        jLabel8.setVisible(false);
+        jPanelModificar.setVisible(true);
+        jLabel8.setVisible(true);
+        jPanelbuscar.setVisible(false);
+        jLabel5.setVisible(false);
         jComboBox1.setEnabled(false);
     }
-    
-    public void funcionamientoBotonBuscardsa() {
-        if (true) {
-            JOptionPane.showMessageDialog(null, "se ingreso el usuario correctamente", "aviso", JOptionPane.INFORMATION_MESSAGE);
+
+    public void funcionamientoBotonModificar() {
+        loginModificar dialog = new loginModificar(parents, true);
+        dialog.setVisible(true);
+        if (dialog.isLogeo()) {
+            int id = Integer.valueOf(info.get(jComboBox1.getSelectedIndex()).getId());
+            boolean tarjeta = (jCheckBox1.isEnabled() && jCheckBox1.isSelected()) ? true : false;
+            if (controlador.modificarCliente(id, jTextFieldJNombre.getText(), Integer.valueOf(jTextFieldNit.getText()), tarjeta)) {
+                JOptionPane.showMessageDialog(null, "el usuario se modifico correctamente", "aviso", JOptionPane.INFORMATION_MESSAGE);
+                estadoinicial();
+            } else {
+                JOptionPane.showMessageDialog(null, "Ocurrio un error.", "error", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            JOptionPane.showMessageDialog(null, "El nit ingresado ya está en usuario en el sistema.", "error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El usuario ingresado no es administrador.", "error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
+    public void estadoinicial(){
+        jPanelModificar.setVisible(false);
+        jLabel8.setVisible(false);
+        jPanelbuscar.setVisible(true);
+        jLabel5.setVisible(true);
+        jComboBox1.setEnabled(true);
+        jTextFieldJNombre.setEnabled(false);
+        jTextFieldNit.setEnabled(false);
+        jCheckBox1.setEnabled(false);
+        jTextFieldJNombre.setText("");
+        jTextFieldNit.setText("");
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jCheckBox1;

@@ -130,7 +130,7 @@ JOIN gamerprosc.sucursales s ON ps.id_sucursal = s.id_sucursal;
 
 --Encargada de mostrar solo nits de clientes:
 CREATE OR REPLACE VIEW gamerprosc.vista_nit_clientes AS
-SELECT nit
+SELECT id_cliente, nit
 FROM gamerprosc.clientes;
 
 --Encargada de darme los datos para modificar clientes:
@@ -236,7 +236,10 @@ RETURNS trigger AS $$
 DECLARE
   nit_existente integer;
 BEGIN
-  SELECT nit INTO nit_existente FROM gamerprosc.vista_nit_clientes WHERE nit = NEW.nit;
+  PERFORM 1 
+  FROM gamerprosc.vista_nit_clientes 
+  WHERE nit = NEW.nit AND id_cliente != NEW.id_cliente;
+
   IF FOUND THEN
     RAISE EXCEPTION 'El NIT % ya existe', NEW.nit;
   END IF;

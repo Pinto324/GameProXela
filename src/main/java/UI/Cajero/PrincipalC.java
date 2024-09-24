@@ -215,7 +215,10 @@ public class PrincipalC extends javax.swing.JFrame {
     }//GEN-LAST:event_jPanelingresoMouseClicked
 
     private void jPanelInfo5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelInfo5MouseClicked
-        // TODO add your handling code here:
+        this.setVisible(false);
+        ModificarCliente md = new ModificarCliente(this, true, datos);
+        md.setVisible(true);
+        this.setVisible(true);
     }//GEN-LAST:event_jPanelInfo5MouseClicked
 
     public void funcionIngreso(){

@@ -59,16 +59,14 @@ public void modificarCliente(int id, String nombre, int nit, boolean tarjeta) th
     try {
         Con = new Conexion("modificador", "modpass");
         Conn = Con.IniciarConexion();
-        String query = tarjeta ? "SELECT gamerprosc.actualizar_cliente_con_tarjeta(?, ?, ?)" : "SELECT gamerprosc.actualizar_cliente_sin_tarjeta(?, ?, ?, ?, ?)";
+        String query = tarjeta ?  "SELECT gamerprosc.actualizar_cliente_sin_tarjeta(?, ?, ?, ?, ?)" : "SELECT gamerprosc.actualizar_cliente_con_tarjeta(?, ?, ?)";
         stmt = Conn.prepareStatement(query);        
-        stmt.setInt(1, nit);
+        stmt.setInt(1, id);
         stmt.setString(2, nombre);
+        stmt.setInt(3, nit);        
         if(tarjeta){
-            stmt.setInt(3, id);
-        }else{
-            stmt.setInt(3, 1);
-            stmt.setDate(4, new java.sql.Date(System.currentTimeMillis()));
-            stmt.setInt(5, id);
+            stmt.setShort(4, (short) 1);
+            stmt.setDate(5, new java.sql.Date(System.currentTimeMillis()));           
         }
         stmt.executeUpdate();
     } finally {
