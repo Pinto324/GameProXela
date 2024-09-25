@@ -28,9 +28,10 @@ public class Venta extends javax.swing.JDialog {
     private CVentas controladorVentas = new CVentas();
     private String[] datos;
     private ArrayList<productoVenta> infoProducto;
-    private ArrayList<clientes> infoCliente;   
+    private ArrayList<clientes> infoCliente;
     private Stack<DetalleVentas> Carrito = new Stack();
     private double PrecioTotal = 0.00;
+
     /**
      * Creates new form RellenarI
      */
@@ -38,10 +39,10 @@ public class Venta extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
-        datos = da;  
+        datos = da;
         llenarcomboClientes();
         estadoInicial();
-        jLaberFactura.setText(""+controladorVentas.numeroFactura());   
+        jLaberFactura.setText("" + controladorVentas.numeroFactura());
         llenarTabla();
     }
 
@@ -217,7 +218,7 @@ public class Venta extends javax.swing.JDialog {
                 jCheckBoxPuntosActionPerformed(evt);
             }
         });
-        jPanel2.add(jCheckBoxPuntos, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 30, 50, -1));
+        jPanel2.add(jCheckBoxPuntos, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 30, 30, -1));
 
         jLabelPuntos.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabelPuntos.setForeground(new java.awt.Color(102, 204, 255));
@@ -421,8 +422,8 @@ public class Venta extends javax.swing.JDialog {
 
     private void jComboBoxProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxProductoActionPerformed
         jComboBoxUnidades.removeAllItems();
-        for(int i = 0 ; i < infoProducto.get(jComboBoxProducto.getSelectedIndex()).getStock_estanteria(); i++){
-            jComboBoxUnidades.addItem(String.valueOf(i+1));
+        for (int i = 0; i < infoProducto.get(jComboBoxProducto.getSelectedIndex()).getStock_estanteria(); i++) {
+            jComboBoxUnidades.addItem(String.valueOf(i + 1));
         }
         jComboBoxUnidades.setEnabled(true);
         jLabelPrecio.setText(String.valueOf(infoProducto.get(jComboBoxProducto.getSelectedIndex()).getPrecio()));
@@ -430,7 +431,7 @@ public class Venta extends javax.swing.JDialog {
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
         agregarCarrito();
-        
+
     }//GEN-LAST:event_jLabel9MouseClicked
 
     private void jPanelAgregarCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelAgregarCarritoMouseClicked
@@ -446,13 +447,13 @@ public class Venta extends javax.swing.JDialog {
     }//GEN-LAST:event_jComboBoxProductoPopupMenuWillBecomeInvisible
 
     private void jLabel15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MouseClicked
-        // TODO add your handling code here:
+        FinalizarCompra();
     }//GEN-LAST:event_jLabel15MouseClicked
 
     private void jPanelFinalizarCompraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelFinalizarCompraMouseClicked
-        // TODO add your handling code here:
+        FinalizarCompra();
     }//GEN-LAST:event_jPanelFinalizarCompraMouseClicked
-    public void funcionamientoBotonBuscar(){
+    public void funcionamientoBotonBuscar() {
         jLabelNombre.setText(infoCliente.get(jComboBox1.getSelectedIndex()).getNombre());
         jLabelNit.setText(infoCliente.get(jComboBox1.getSelectedIndex()).getNit());
         jPanelBuscar.setVisible(false);
@@ -461,7 +462,7 @@ public class Venta extends javax.swing.JDialog {
         if (!(infoCliente.get(jComboBox1.getSelectedIndex()).getTipoTarjeta().equals("0"))) {
             jLabelPuntos.setVisible(true);
             jCheckBoxPuntos.setVisible(true);
-        }       
+        }
         jLabelAgregarProductos.setVisible(true);
         jComboBoxProducto.setVisible(true);
         jPanelAgregarCarrito.setVisible(true);
@@ -478,8 +479,9 @@ public class Venta extends javax.swing.JDialog {
             jComboBox1.addItem(infoCliente.get(i).getNit() + " " + infoCliente.get(i).getNombre());
         }
     }
-    public void estadoInicial(){
-    jCheckBoxPuntos.setVisible(false);
+
+    public void estadoInicial() {
+        jCheckBoxPuntos.setVisible(false);
         jLabelPuntos.setVisible(false);
         jLabelAgregarProductos.setVisible(false);
         jComboBoxProducto.setVisible(false);
@@ -491,23 +493,23 @@ public class Venta extends javax.swing.JDialog {
         jComboBoxUnidades.setEnabled(false);
         jPanelFinalizarCompra.setVisible(false);
     }
-    
-    public void agregarCarrito(){
-        for(int i = 0 ; i < infoProducto.get(jComboBoxProducto.getSelectedIndex()).getStock_estanteria(); i++){
-            jComboBoxUnidades.addItem(String.valueOf(i+1));
+
+    public void agregarCarrito() {
+        for (int i = 0; i < infoProducto.get(jComboBoxProducto.getSelectedIndex()).getStock_estanteria(); i++) {
+            jComboBoxUnidades.addItem(String.valueOf(i + 1));
         }
         jComboBoxUnidades.setEnabled(true);
         int factura = controladorVentas.numeroFactura();
         int idProducto = infoProducto.get(jComboBoxProducto.getSelectedIndex()).getId_producto();
-        int cantidad = jComboBoxUnidades.getSelectedIndex()+1;
+        int cantidad = jComboBoxUnidades.getSelectedIndex() + 1;
         String nombre = infoProducto.get(jComboBoxProducto.getSelectedIndex()).getNombre();
         double precioU = Double.valueOf(jLabelPrecio.getText());
-        DetalleVentas venta = new DetalleVentas(factura, idProducto,nombre ,cantidad, precioU);
+        DetalleVentas venta = new DetalleVentas(factura, idProducto, nombre, cantidad, precioU);
         Carrito.push(venta);
         jPanelFinalizarCompra.setVisible(true);
         llenarTabla();
     }
-           
+
     public void rellenarDatosProductos() {
         try {
             CProductos controlador = new CProductos();
@@ -520,17 +522,17 @@ public class Venta extends javax.swing.JDialog {
         }
     }
 
-    public void llenarTabla(){
+    public void llenarTabla() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Nombre Producto");
         model.addColumn("Precio unidad");
         model.addColumn("unidades");
-        model.addColumn("Precio por todo");        
+        model.addColumn("Precio por todo");
         jTable1.setModel(model);
         double preciot = 0.00;
-        for (int i = 0; i < Carrito.size(); i ++) {
+        for (int i = 0; i < Carrito.size(); i++) {
             double suma = Carrito.get(i).getCantidad() * Carrito.get(i).getPrecioU();
-            Object[] fila = {Carrito.get(i).getNombreProducto(),Carrito.get(i).getPrecioU(),Carrito.get(i).getCantidad(),suma};
+            Object[] fila = {Carrito.get(i).getNombreProducto(), Carrito.get(i).getPrecioU(), Carrito.get(i).getCantidad(), suma};
             model.addRow(fila);
             preciot += suma;
         }
@@ -540,11 +542,25 @@ public class Venta extends javax.swing.JDialog {
         jTable1.getColumnModel().getColumn(2).setPreferredWidth(50);
         jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
         PrecioTotal = preciot;
-        jLabel12.setText("Q"+PrecioTotal);
+        jLabel12.setText("Q" + PrecioTotal);
     }
-    
-    public void FinalizarCompra(){
-        
+
+    public void FinalizarCompra() {
+        int NoFac = controladorVentas.numeroFactura();
+        int idCliente = Integer.valueOf(infoCliente.get(jComboBox1.getSelectedIndex()).getId());
+        int idCajero = Integer.valueOf(datos[0]);
+        int sucursal = Integer.valueOf(datos[4]);
+        double total = PrecioTotal;
+        int descuento = jCheckBoxPuntos.isSelected() ? descuento = Integer.valueOf(infoCliente.get(jComboBox1.getSelectedIndex()).getPuntos()) : 0;
+        int totalRedondeado = (int) Math.floor(total);
+        if(descuento > totalRedondeado){
+            descuento = totalRedondeado;
+        }
+        if (controladorVentas.IngreasarVenta(NoFac, idCliente, idCajero, sucursal, total, descuento, Carrito)) {
+            JOptionPane.showMessageDialog(null, "La venta se realizó correctamente", "aviso", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Ocurrio un error con unas existencias, repita la venta porfavor", "error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jCheckBox1;

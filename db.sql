@@ -145,6 +145,7 @@ FROM gamerprosc.clientes;
 CREATE OR REPLACE VIEW gamerprosc.vista_venta_productos AS
 SELECT id_cliente, nit, nombre, tipo_tarjeta
 FROM gamerprosc.clientes;
+
 -----------------------------------------------------------------------
 --Funciones:
 --encargada del manejo de la view inventario_rellenarinfo
@@ -294,7 +295,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--encargada de traer los puntos de un cliente en especifico
+CREATE OR REPLACE FUNCTION gamerprosc.puntos_cliente(_id_cliente integer)
+RETURNS TABLE(
+	  puntos integer
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+		    v.puntos
+    FROM 
+        gamerprosc.clientes v
+    WHERE
+        v.id_cliente = _id_cliente;
+END;
+$$ LANGUAGE plpgsql;
 
+
+--------------------------------------------------------------------------------------------------------
 --trigers:
 --encargada de verificar que hayan suficientes productos en bodega y eliminar para mover a estanteria
 CREATE OR REPLACE FUNCTION gamerprosc.verificar_nit_cliente()
@@ -366,6 +384,36 @@ CREATE TRIGGER trigger_eliminar_venta
 BEFORE DELETE ON gamerprosc.detalle_ventas
 FOR EACH ROW
 EXECUTE FUNCTION gamerprosc.actualizar_stock_eliminar_venta();
+--trigger para restar los puntos de descuento usados si hace una venta
+CREATE OR REPLACE FUNCTION gamerprosc.restar_puntos_venta()
+RETURNS trigger AS $$
+BEGIN
+    UPDATE gamerprosc.cliente 
+    SET puntos = puntos - NEW.descuento
+    WHERE id = NEW.id_cliente;
+    RETURN NEW;  
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_restar_puntos
+AFTER INSERT ON gamerprosc.ventas
+FOR EACH ROW
+EXECUTE FUNCTION gamerprosc.restar_puntos_venta();
+--trigger para regresar los puntos de descuento usados si se revierte una venta
+CREATE OR REPLACE FUNCTION gamerprosc.retornar_puntos_eliminar_venta()
+RETURNS trigger AS $$
+BEGIN
+    UPDATE gamerprosc.cliente 
+    SET puntos = puntos + OLD.descuento
+    WHERE id = OLD.id_cliente;
+    RETURN OLD;  
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_retornar_puntos
+AFTER DELETE ON gamerprosc.ventas
+FOR EACH ROW
+EXECUTE FUNCTION gamerprosc.retornar_puntos_eliminar_venta();
 
 
 --permiso para usar el schema 

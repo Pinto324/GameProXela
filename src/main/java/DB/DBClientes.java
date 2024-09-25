@@ -84,12 +84,28 @@ public void modificarCliente(int id, String nombre, int nit, boolean tarjeta) th
             Rs = stmt.executeQuery();
             ArrayList<clientes> Info = new ArrayList();
             while(Rs.next()){
-                clientes dato = new clientes(Rs.getString("id_cliente"),Rs.getString("nit"),Rs.getString("nombre"),Rs.getString("tipo_tarjeta"),"","");
+                clientes dato = new clientes(Rs.getString("id_cliente"),Rs.getString("nit"),Rs.getString("nombre"),Rs.getString("tipo_tarjeta"),Rs.getString("puntos"),"");
                 Info.add(dato);
             }
             CerrarRecursos();
             return Info;
         }finally {
+            CerrarRecursos();
+        }
+    }
+    
+    public int puntosCliente(int idCliente) throws SQLException {
+        try {
+            // Inicializar la conexión con PostgreSQL
+            Con = new Conexion("lector", "lectorpass");
+            Conn = Con.IniciarConexion();
+            String query = "SELECT * FROM gamerprosc.puntos_cliente(?)";
+            stmt = Conn.prepareStatement(query);
+            stmt.setInt(1, idCliente);
+            Rs = stmt.executeQuery();
+            Rs.next();
+            return Rs.getInt("puntos");          
+        } finally {
             CerrarRecursos();
         }
     }

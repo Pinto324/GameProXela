@@ -42,4 +42,7 @@ public class CClientes {
     public ArrayList<clientes> buscarClientes(){
         try{return db.informacionClientes();}catch(SQLException e){return null;}
     }
+    public int traerPuntos(int id){
+        try{return db.puntosCliente(id);}catch(SQLException e){return 0;}
+    }
 }
