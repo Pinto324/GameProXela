@@ -5,6 +5,7 @@
  */
 package DB;
 
+import Objetos.productoVenta;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -55,6 +56,26 @@ public class DBProductosSucur extends DB {
                 datos.add(Rs.getString("pasillo"));
             }
             return datos;
+        } finally {
+            CerrarRecursos();
+        }
+    }
+    
+    public ArrayList<productoVenta> informacionRellenarVentas(int sucursal) throws SQLException {
+        try {
+            // Inicializar la conexión con PostgreSQL
+            Con = new Conexion("lector", "lectorpass");
+            Conn = Con.IniciarConexion();
+            String query = "SELECT * FROM gamerprosc.filtrar_rellenarinfo(?)";
+            stmt = Conn.prepareStatement(query);
+            stmt.setInt(1, sucursal);
+            Rs = stmt.executeQuery();
+            ArrayList<productoVenta> info = new ArrayList<>();
+            while (Rs.next()) {
+                productoVenta datos = new productoVenta(Rs.getInt("id_ps"), Rs.getString("nombre"), Rs.getInt("id_producto"),Rs.getInt("stock_estanteria"), Rs.getDouble("precio"));
+                info.add(datos);
+            }
+            return info;
         } finally {
             CerrarRecursos();
         }

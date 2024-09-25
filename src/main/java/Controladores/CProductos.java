@@ -5,6 +5,7 @@
  */
 package Controladores;
 import DB.DBProductosSucur;
+import Objetos.productoVenta;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,6 +25,11 @@ public class CProductos {
     public ArrayList<String> InformacionproductosC(int sucursal) throws SQLException{
         return db.informacionRellenarSucursalC(sucursal);
     }
+    
+    public ArrayList<productoVenta> InformacionproductosParaVenta(int sucursal) throws SQLException{
+        return db.informacionRellenarVentas(sucursal);
+    }
+    
     public boolean ingeresoEstanterias(int id,int cantidad,int pasillo){
         try{
             db.modificarEstanteria(id, cantidad, pasillo);

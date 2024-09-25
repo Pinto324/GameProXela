@@ -7,11 +7,16 @@ package UI.Cajero;
 
 import Controladores.CClientes;
 import Controladores.CProductos;
+import Controladores.CVentas;
+import Objetos.DetalleVentas;
 import Objetos.clientes;
+import Objetos.productoVenta;
 import UI.Utilidades;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Stack;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,9 +24,13 @@ import javax.swing.JOptionPane;
  */
 public class Venta extends javax.swing.JDialog {
 
-    CClientes controlador = new CClientes();
-    String[] datos;
-    ArrayList<clientes> info;
+    private CClientes controlador = new CClientes();
+    private CVentas controladorVentas = new CVentas();
+    private String[] datos;
+    private ArrayList<productoVenta> infoProducto;
+    private ArrayList<clientes> infoCliente;   
+    private Stack<DetalleVentas> Carrito = new Stack();
+    private double PrecioTotal = 0.00;
     /**
      * Creates new form RellenarI
      */
@@ -29,10 +38,11 @@ public class Venta extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
-        Utilidades.SoloNumeros(jTextFieldUnidades);
         datos = da;  
         llenarcomboClientes();
         estadoInicial();
+        jLaberFactura.setText(""+controladorVentas.numeroFactura());   
+        llenarTabla();
     }
 
     /**
@@ -53,7 +63,6 @@ public class Venta extends javax.swing.JDialog {
         jPanelBuscar = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jTextFieldUnidades = new javax.swing.JTextField();
         jCheckBox1 = new javax.swing.JCheckBox();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabelNit = new javax.swing.JLabel();
@@ -63,15 +72,20 @@ public class Venta extends javax.swing.JDialog {
         jLabelPuntos = new javax.swing.JLabel();
         jLabelAgregarProductos = new javax.swing.JLabel();
         jComboBoxProducto = new javax.swing.JComboBox<>();
-        jPanelAgregar = new javax.swing.JPanel();
+        jPanelAgregarCarrito = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel13 = new javax.swing.JLabel();
+        jLaberNoFac = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
+        jComboBoxUnidades = new javax.swing.JComboBox<>();
+        jPanelFinalizarCompra = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLaberFactura = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -159,7 +173,6 @@ public class Venta extends javax.swing.JDialog {
         jLabel6.setForeground(new java.awt.Color(102, 204, 255));
         jLabel6.setText("C/F");
         jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 10, -1, 16));
-        jPanel2.add(jTextFieldUnidades, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 150, 60, 20));
 
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -216,6 +229,15 @@ public class Venta extends javax.swing.JDialog {
         jLabelAgregarProductos.setText("Agregar producto");
         jPanel2.add(jLabelAgregarProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 130, -1, 28));
 
+        jComboBoxProducto.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+                jComboBoxProductoPopupMenuWillBecomeInvisible(evt);
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+        });
         jComboBoxProducto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxProductoActionPerformed(evt);
@@ -223,18 +245,18 @@ public class Venta extends javax.swing.JDialog {
         });
         jPanel2.add(jComboBoxProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, 200, -1));
 
-        jPanelAgregar.setBackground(new java.awt.Color(102, 204, 255));
-        jPanelAgregar.setForeground(new java.awt.Color(255, 255, 255));
-        jPanelAgregar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanelAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
+        jPanelAgregarCarrito.setBackground(new java.awt.Color(102, 204, 255));
+        jPanelAgregarCarrito.setForeground(new java.awt.Color(255, 255, 255));
+        jPanelAgregarCarrito.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanelAgregarCarrito.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanelAgregarMouseClicked(evt);
+                jPanelAgregarCarritoMouseClicked(evt);
             }
         });
 
         jLabel9.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Agregar");
+        jLabel9.setText("Agregar a Carrito");
         jLabel9.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -242,21 +264,21 @@ public class Venta extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanelAgregarLayout = new javax.swing.GroupLayout(jPanelAgregar);
-        jPanelAgregar.setLayout(jPanelAgregarLayout);
-        jPanelAgregarLayout.setHorizontalGroup(
-            jPanelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelAgregarLayout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelAgregarCarritoLayout = new javax.swing.GroupLayout(jPanelAgregarCarrito);
+        jPanelAgregarCarrito.setLayout(jPanelAgregarCarritoLayout);
+        jPanelAgregarCarritoLayout.setHorizontalGroup(
+            jPanelAgregarCarritoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelAgregarCarritoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel9)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanelAgregarLayout.setVerticalGroup(
-            jPanelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        jPanelAgregarCarritoLayout.setVerticalGroup(
+            jPanelAgregarCarritoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jPanel2.add(jPanelAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, 60, 30));
+        jPanel2.add(jPanelAgregarCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, 120, 30));
 
         jLabel10.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(102, 204, 255));
@@ -288,15 +310,61 @@ public class Venta extends javax.swing.JDialog {
 
         jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 237, 720, 180));
 
-        jLabel13.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(102, 204, 255));
-        jLabel13.setText("Precio");
-        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 130, -1, -1));
+        jLaberNoFac.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        jLaberNoFac.setForeground(new java.awt.Color(102, 204, 255));
+        jLaberNoFac.setText("No Factura:");
+        jPanel2.add(jLaberNoFac, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 210, -1, -1));
 
         jLabel14.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(102, 204, 255));
         jLabel14.setText("Precio total:");
         jPanel2.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 210, 80, -1));
+
+        jPanel2.add(jComboBoxUnidades, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 150, 60, -1));
+
+        jPanelFinalizarCompra.setBackground(new java.awt.Color(102, 204, 255));
+        jPanelFinalizarCompra.setForeground(new java.awt.Color(255, 255, 255));
+        jPanelFinalizarCompra.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanelFinalizarCompra.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanelFinalizarCompraMouseClicked(evt);
+            }
+        });
+
+        jLabel15.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel15.setText("Finalizar Compra");
+        jLabel15.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel15MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelFinalizarCompraLayout = new javax.swing.GroupLayout(jPanelFinalizarCompra);
+        jPanelFinalizarCompra.setLayout(jPanelFinalizarCompraLayout);
+        jPanelFinalizarCompraLayout.setHorizontalGroup(
+            jPanelFinalizarCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelFinalizarCompraLayout.createSequentialGroup()
+                .addComponent(jLabel15)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanelFinalizarCompraLayout.setVerticalGroup(
+            jPanelFinalizarCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jPanel2.add(jPanelFinalizarCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 150, 110, 30));
+
+        jLabel16.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        jLabel16.setForeground(new java.awt.Color(102, 204, 255));
+        jLabel16.setText("Precio");
+        jPanel2.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 130, -1, -1));
+
+        jLaberFactura.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        jLaberFactura.setForeground(new java.awt.Color(102, 204, 255));
+        jLaberFactura.setText(" ");
+        jPanel2.add(jLaberFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 210, -1, -1));
 
         jPanelFondo.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 740, 420));
 
@@ -320,7 +388,7 @@ public class Venta extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelFondo, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+            .addComponent(jPanelFondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -352,40 +420,62 @@ public class Venta extends javax.swing.JDialog {
     }//GEN-LAST:event_jCheckBoxPuntosActionPerformed
 
     private void jComboBoxProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxProductoActionPerformed
-        // TODO add your handling code here:
+        jComboBoxUnidades.removeAllItems();
+        for(int i = 0 ; i < infoProducto.get(jComboBoxProducto.getSelectedIndex()).getStock_estanteria(); i++){
+            jComboBoxUnidades.addItem(String.valueOf(i+1));
+        }
+        jComboBoxUnidades.setEnabled(true);
+        jLabelPrecio.setText(String.valueOf(infoProducto.get(jComboBoxProducto.getSelectedIndex()).getPrecio()));
     }//GEN-LAST:event_jComboBoxProductoActionPerformed
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
-        // TODO add your handling code here:
+        agregarCarrito();
+        
     }//GEN-LAST:event_jLabel9MouseClicked
 
-    private void jPanelAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelAgregarMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPanelAgregarMouseClicked
+    private void jPanelAgregarCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelAgregarCarritoMouseClicked
+        agregarCarrito();
+    }//GEN-LAST:event_jPanelAgregarCarritoMouseClicked
 
     private void jComboBox1PopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jComboBox1PopupMenuWillBecomeVisible
         jPanelBuscar.setEnabled(true);
     }//GEN-LAST:event_jComboBox1PopupMenuWillBecomeVisible
+
+    private void jComboBoxProductoPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jComboBoxProductoPopupMenuWillBecomeInvisible
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxProductoPopupMenuWillBecomeInvisible
+
+    private void jLabel15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel15MouseClicked
+
+    private void jPanelFinalizarCompraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelFinalizarCompraMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanelFinalizarCompraMouseClicked
     public void funcionamientoBotonBuscar(){
-        jLabelNombre.setText(info.get(jComboBox1.getSelectedIndex()).getNombre());
-        jLabelNit.setText(info.get(jComboBox1.getSelectedIndex()).getNit());
-        if (info.get(jComboBox1.getSelectedIndex()).getTipoTarjeta().equals("0")) {
+        jLabelNombre.setText(infoCliente.get(jComboBox1.getSelectedIndex()).getNombre());
+        jLabelNit.setText(infoCliente.get(jComboBox1.getSelectedIndex()).getNit());
+        jPanelBuscar.setVisible(false);
+        jComboBox1.setVisible(false);
+        jLabel3.setVisible(false);
+        if (!(infoCliente.get(jComboBox1.getSelectedIndex()).getTipoTarjeta().equals("0"))) {
             jLabelPuntos.setVisible(true);
             jCheckBoxPuntos.setVisible(true);
         }       
         jLabelAgregarProductos.setVisible(true);
         jComboBoxProducto.setVisible(true);
-        jPanelAgregar.setVisible(true);
+        jPanelAgregarCarrito.setVisible(true);
         jLabel11.setVisible(true);
         jLabel14.setVisible(true);
-        jTextFieldUnidades.setVisible(true);
+        jComboBoxUnidades.setVisible(true);
         jTable1.setVisible(true);
+        rellenarDatosProductos();
     }
 
     public void llenarcomboClientes() {
-        info = controlador.buscarClientes();
-        for (int i = 0; i < info.size(); i++) {
-            jComboBox1.addItem(info.get(i).getNit() + " " + info.get(i).getNombre());
+        infoCliente = controlador.buscarClientes();
+        for (int i = 0; i < infoCliente.size(); i++) {
+            jComboBox1.addItem(infoCliente.get(i).getNit() + " " + infoCliente.get(i).getNombre());
         }
     }
     public void estadoInicial(){
@@ -393,36 +483,82 @@ public class Venta extends javax.swing.JDialog {
         jLabelPuntos.setVisible(false);
         jLabelAgregarProductos.setVisible(false);
         jComboBoxProducto.setVisible(false);
-        jPanelAgregar.setVisible(false);
+        jPanelAgregarCarrito.setVisible(false);
         jLabel11.setVisible(false);
         jLabel14.setVisible(false);
-        jTextFieldUnidades.setVisible(false);
+        jComboBoxUnidades.setVisible(false);
         jTable1.setVisible(false);
+        jComboBoxUnidades.setEnabled(false);
+        jPanelFinalizarCompra.setVisible(false);
+    }
+    
+    public void agregarCarrito(){
+        for(int i = 0 ; i < infoProducto.get(jComboBoxProducto.getSelectedIndex()).getStock_estanteria(); i++){
+            jComboBoxUnidades.addItem(String.valueOf(i+1));
+        }
+        jComboBoxUnidades.setEnabled(true);
+        int factura = controladorVentas.numeroFactura();
+        int idProducto = infoProducto.get(jComboBoxProducto.getSelectedIndex()).getId_producto();
+        int cantidad = jComboBoxUnidades.getSelectedIndex()+1;
+        String nombre = infoProducto.get(jComboBoxProducto.getSelectedIndex()).getNombre();
+        double precioU = Double.valueOf(jLabelPrecio.getText());
+        DetalleVentas venta = new DetalleVentas(factura, idProducto,nombre ,cantidad, precioU);
+        Carrito.push(venta);
+        jPanelFinalizarCompra.setVisible(true);
+        llenarTabla();
     }
            
-    public void rellenarDatos() {
+    public void rellenarDatosProductos() {
         try {
             CProductos controlador = new CProductos();
-            info = controlador.Informacionproductos(Integer.valueOf(datos[4]));
-            for (int i = 1; i < info.size(); i += 2) {
-                jComboBox2.addItem(info.get(i));
+            infoProducto = controlador.InformacionproductosParaVenta(Integer.valueOf(datos[4]));
+            for (int i = 0; i < infoProducto.size(); i++) {
+                jComboBoxProducto.addItem(infoProducto.get(i).getNombre());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
+    public void llenarTabla(){
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Nombre Producto");
+        model.addColumn("Precio unidad");
+        model.addColumn("unidades");
+        model.addColumn("Precio por todo");        
+        jTable1.setModel(model);
+        double preciot = 0.00;
+        for (int i = 0; i < Carrito.size(); i ++) {
+            double suma = Carrito.get(i).getCantidad() * Carrito.get(i).getPrecioU();
+            Object[] fila = {Carrito.get(i).getNombreProducto(),Carrito.get(i).getPrecioU(),Carrito.get(i).getCantidad(),suma};
+            model.addRow(fila);
+            preciot += suma;
+        }
+        jTable1.setModel(model);
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(100);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(50);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(50);
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+        PrecioTotal = preciot;
+        jLabel12.setText("Q"+PrecioTotal);
+    }
+    
+    public void FinalizarCompra(){
+        
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBoxPuntos;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBoxProducto;
+    private javax.swing.JComboBox<String> jComboBoxUnidades;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
@@ -434,13 +570,15 @@ public class Venta extends javax.swing.JDialog {
     private javax.swing.JLabel jLabelNombre;
     private javax.swing.JLabel jLabelPrecio;
     private javax.swing.JLabel jLabelPuntos;
+    private javax.swing.JLabel jLaberFactura;
+    private javax.swing.JLabel jLaberNoFac;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanelAgregar;
+    private javax.swing.JPanel jPanelAgregarCarrito;
     private javax.swing.JPanel jPanelBuscar;
+    private javax.swing.JPanel jPanelFinalizarCompra;
     private javax.swing.JPanel jPanelFondo;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextFieldUnidades;
     // End of variables declaration//GEN-END:variables
 }

@@ -37,7 +37,7 @@ public class PrincipalC extends javax.swing.JFrame {
         BtnSalir = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jPanelInfo3 = new javax.swing.JPanel();
+        jPanelVentas = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanelingreso = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -98,33 +98,33 @@ public class PrincipalC extends javax.swing.JFrame {
         });
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 0, 40, 29));
 
-        jPanelInfo3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanelInfo3.addMouseListener(new java.awt.event.MouseAdapter() {
+        jPanelVentas.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelVentas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanelInfo3MouseClicked(evt);
+                jPanelVentasMouseClicked(evt);
             }
         });
 
         jLabel1.setText("Ventas");
 
-        javax.swing.GroupLayout jPanelInfo3Layout = new javax.swing.GroupLayout(jPanelInfo3);
-        jPanelInfo3.setLayout(jPanelInfo3Layout);
-        jPanelInfo3Layout.setHorizontalGroup(
-            jPanelInfo3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelInfo3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelVentasLayout = new javax.swing.GroupLayout(jPanelVentas);
+        jPanelVentas.setLayout(jPanelVentasLayout);
+        jPanelVentasLayout.setHorizontalGroup(
+            jPanelVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelVentasLayout.createSequentialGroup()
                 .addGap(136, 136, 136)
                 .addComponent(jLabel1)
                 .addContainerGap(159, Short.MAX_VALUE))
         );
-        jPanelInfo3Layout.setVerticalGroup(
-            jPanelInfo3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelInfo3Layout.createSequentialGroup()
+        jPanelVentasLayout.setVerticalGroup(
+            jPanelVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelVentasLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addContainerGap(148, Short.MAX_VALUE))
         );
 
-        jPanel3.add(jPanelInfo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 330, 170));
+        jPanel3.add(jPanelVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 330, 170));
 
         jPanelingreso.setBackground(new java.awt.Color(255, 255, 255));
         jPanelingreso.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -206,9 +206,12 @@ public class PrincipalC extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_jLabel2MouseClicked
 
-    private void jPanelInfo3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelInfo3MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPanelInfo3MouseClicked
+    private void jPanelVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelVentasMouseClicked
+        this.setVisible(false);
+        Venta md = new Venta(this, true, datos);
+        md.setVisible(true);
+        this.setVisible(true);
+    }//GEN-LAST:event_jPanelVentasMouseClicked
 
     private void jPanelingresoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanelingresoMouseClicked
         funcionIngreso();
@@ -237,8 +240,8 @@ public class PrincipalC extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanelFondo;
-    private javax.swing.JPanel jPanelInfo3;
     private javax.swing.JPanel jPanelInfo5;
+    private javax.swing.JPanel jPanelVentas;
     private javax.swing.JPanel jPanelingreso;
     // End of variables declaration//GEN-END:variables
 }

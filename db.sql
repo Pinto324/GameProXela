@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS gamerprosc.ventas (
   fecha date,
   id_cliente integer,
   id_cajero integer,
+  sucursal integer,
   total_sind decimal(10, 2),
   descuento integer,
   total_cond decimal(10, 2)
@@ -109,17 +110,19 @@ VALUES
   
 INSERT INTO gamerprosc.productos_sucursal (id_producto, id_sucursal, stock_bodega, stock_estanteria, pasillo)
 VALUES
-  (1, 1, 0, 0, -1),
-  (2, 1, 0, 0, -1),
-  (3, 1, 0, 0, -1),
-  (4, 1, 0, 0, -1),
-  (5, 1, 0, 0, -1),
-  (6, 1, 0, 0, -1),
-  (7, 1, 0, 0, -1),
-  (8, 1, 0, 0, -1),
-  (9, 1, 0, 0, -1),
-  (10, 1, 0, 0, -1);
+  (1, 1, 0, 0, 0),
+  (2, 1, 0, 0, 0),
+  (3, 1, 0, 0, 0),
+  (4, 1, 0, 0, 0),
+  (5, 1, 0, 0, 0),
+  (6, 1, 0, 0, 0),
+  (7, 1, 0, 0, 0),
+  (8, 1, 0, 0, 0),
+  (9, 1, 0, 0, 0),
+  (10, 1, 0, 0, 0);
 -----------------------------------------------------------------------
+--seleccionar una secuencia
+SELECT last_value FROM gamerprosc.ventas_no_factura_seq;
 --Views:
 --Encargada del traer la información para las utilidades de inventario:
 CREATE OR REPLACE VIEW gamerprosc.vista_inventario_rellenarinfo AS
@@ -137,31 +140,13 @@ FROM gamerprosc.clientes;
 CREATE OR REPLACE VIEW gamerprosc.vista_modificar_clientes AS
 SELECT id_cliente, nit, nombre, tipo_tarjeta
 FROM gamerprosc.clientes;
+
+--Encargada de darme los datos para ventas:
+CREATE OR REPLACE VIEW gamerprosc.vista_venta_productos AS
+SELECT id_cliente, nit, nombre, tipo_tarjeta
+FROM gamerprosc.clientes;
 -----------------------------------------------------------------------
 --Funciones:
-CREATE OR REPLACE FUNCTION llenar_estanteria()
-RETURNS TRIGGER AS $$
-DECLARE stock_actual INTEGER;
-BEGIN
-
-  SELECT stock_bodega INTO stock_actual 
-  FROM gamerprosc.productos_sucursal 
-  WHERE id_producto = NEW.id_producto AND id_sucursal = NEW.id_sucursal;
-
-  IF NEW.stock_estanteria > stock_actual THEN
-    RAISE EXCEPTION 'Stock insuficiente en bodega. Solo hay % unidades en stock.', stock_actual;
-  END IF;
-
-
-  UPDATE gamerprosc.productos_sucursal
-  SET stock_bodega = stock_bodega - NEW.stock_estanteria
-  WHERE id_producto = NEW.id_producto AND id_sucursal = NEW.id_sucursal;
-
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 --encargada del manejo de la view inventario_rellenarinfo
 CREATE OR REPLACE FUNCTION gamerprosc.filtrar_rellenarinfo(_id_sucursal integer)
 RETURNS TABLE(
@@ -230,29 +215,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
---encargada de verificar que hayan suficientes productos en bodega y eliminar para mover a estanteria
-CREATE OR REPLACE FUNCTION gamerprosc.verificar_nit_cliente()
-RETURNS trigger AS $$
-DECLARE
-  nit_existente integer;
-BEGIN
-  PERFORM 1 
-  FROM gamerprosc.vista_nit_clientes 
-  WHERE nit = NEW.nit AND id_cliente != NEW.id_cliente;
-
-  IF FOUND THEN
-    RAISE EXCEPTION 'El NIT % ya existe', NEW.nit;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- encargada del trigger para la tabla clientes
-CREATE TRIGGER trigger_verificar_nit
-BEFORE INSERT OR UPDATE ON gamerprosc.clientes
-FOR EACH ROW
-EXECUTE FUNCTION gamerprosc.verificar_nit_cliente();
-
 ---Encargada de actualizar información de un cliente sin tarjeta previa
 CREATE OR REPLACE FUNCTION gamerprosc.actualizar_cliente_sin_tarjeta(
     p_id_cliente INT,
@@ -287,11 +249,132 @@ BEGIN
     WHERE id_cliente = p_id_cliente;
 END;
 $$ LANGUAGE plpgsql;
+--encargada de insertar las ventas
+CREATE OR REPLACE FUNCTION gamerprosc.funcion_insertar_ventas(
+    fecha DATE,
+    id_cliente INT,
+    id_cajero INT,
+    sucursal integer,
+    total_sind decimal(10, 2),
+    descuento integer
+)
+RETURNS VOID AS $$
+BEGIN
+    
+    INSERT INTO gamerprosc.ventas (fecha, id_cliente, id_cajero, sucursal, total_sind, descuento, total_cond)
+    VALUES (fecha, id_cliente, id_cajero, sucursal, total_sind, descuento, total_sind-descuento);
+END;
+$$ LANGUAGE plpgsql;
+
+--encargada de insertar los detalles de ventas
+CREATE OR REPLACE FUNCTION gamerprosc.funcion_insertar_detalles_de_ventas(
+  no_factura integer,
+  id_producto integer,
+  cantidad integer,
+  precio_u decimal(10, 2)
+)
+RETURNS VOID AS $$
+BEGIN   
+    INSERT INTO gamerprosc.detalle_ventas (no_factura, id_producto, cantidad, precio_u)
+    VALUES (no_factura, id_producto, cantidad, precio_u);
+END;
+$$ LANGUAGE plpgsql;
+--encargada de borrar ventas:
+CREATE OR REPLACE FUNCTION gamerprosc.eliminar_venta(p_no_factura INT)
+RETURNS VOID AS $$
+BEGIN 
+    IF EXISTS (SELECT 1 FROM gamerprosc.detalle_ventas WHERE no_factura = p_no_factura) THEN  
+        DELETE FROM gamerprosc.detalle_ventas WHERE no_factura = p_no_factura;
+    END IF;
+
+    
+    IF EXISTS (SELECT 1 FROM gamerprosc.ventas WHERE no_factura = p_no_factura) THEN
+        DELETE FROM gamerprosc.ventas WHERE no_factura = p_no_factura;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+--trigers:
+--encargada de verificar que hayan suficientes productos en bodega y eliminar para mover a estanteria
+CREATE OR REPLACE FUNCTION gamerprosc.verificar_nit_cliente()
+RETURNS trigger AS $$
+DECLARE
+  nit_existente integer;
+BEGIN
+  PERFORM 1 
+  FROM gamerprosc.vista_nit_clientes 
+  WHERE nit = NEW.nit AND id_cliente != NEW.id_cliente;
+
+  IF FOUND THEN
+    RAISE EXCEPTION 'El NIT % ya existe', NEW.nit;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_verificar_nit
+BEFORE INSERT OR UPDATE ON gamerprosc.clientes
+FOR EACH ROW
+EXECUTE FUNCTION gamerprosc.verificar_nit_cliente();
+
+--encargada de verificar q hayan existencias en detalle venta y descontarlas
+CREATE OR REPLACE FUNCTION gamerprosc.verificar_cantidad_venta()
+RETURNS trigger AS $$
+DECLARE
+  stock_estanteria_actual integer;
+  id_sucursal_actual integer;
+BEGIN
+  SELECT sucursal INTO id_sucursal_actual 
+  FROM gamerprosc.ventas 
+  WHERE no_factura = NEW.no_factura;
+
+  SELECT stock_estanteria INTO stock_estanteria_actual 
+  FROM gamerprosc.productos_sucursal 
+  WHERE id_producto = NEW.id_producto AND id_sucursal = id_sucursal_actual;
+
+  IF NEW.cantidad > stock_estanteria_actual THEN
+    RAISE EXCEPTION 'Cantidad insuficiente, actualmente solo hay %', stock_estanteria_actual;
+  END IF;
+
+  UPDATE gamerprosc.productos_sucursal 
+  SET stock_estanteria = stock_estanteria - NEW.cantidad
+  WHERE id_producto = NEW.id_producto AND id_sucursal = id_sucursal_actual;
+
+  RETURN NEW; 
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_verificar_cantidad_venta
+BEFORE INSERT ON gamerprosc.detalle_ventas
+FOR EACH ROW
+EXECUTE FUNCTION gamerprosc.verificar_cantidad_venta();
+--trigger para regresar a estantería cuando se revierte una venta
+CREATE OR REPLACE FUNCTION gamerprosc.actualizar_stock_eliminar_venta()
+RETURNS trigger AS $$
+BEGIN
+    UPDATE gamerprosc.productos_sucursal
+    SET stock_estanteria = stock_estanteria + OLD.cantidad
+    WHERE id_producto = OLD.id_producto AND id_sucursal = (
+        SELECT sucursal FROM gamerprosc.ventas WHERE no_factura = OLD.no_factura
+    );
+    RETURN OLD;  
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_eliminar_venta
+BEFORE DELETE ON gamerprosc.detalle_ventas
+FOR EACH ROW
+EXECUTE FUNCTION gamerprosc.actualizar_stock_eliminar_venta();
+
 
 --permiso para usar el schema 
 GRANT USAGE ON SCHEMA gamerprosc TO admin;
 GRANT USAGE ON SCHEMA gamerprosc TO lector;
 GRANT USAGE ON SCHEMA gamerprosc TO modificador;
+
+GRANT ALL PRIVILEGES ON SEQUENCE gamerprosc.ventas_no_factura_seq TO lector;
+
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gamerprosc TO admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gamerprosc TO admin;
 
