@@ -31,9 +31,9 @@ public class InformacionI extends javax.swing.JDialog {
         rellenarDatos();
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Nombre");
-        model.addColumn("Precio");
-        model.addColumn("U Estanterias");
+        model.addColumn("Precio"); 
         model.addColumn("U Bodega");
+        model.addColumn("U Estanterias");
         model.addColumn("Pasillo");
         for (int i = 0; i < info.size(); i += 5) {
             Object[] fila = {info.get(i), info.get(i+1), info.get(i+2), info.get(i+3), info.get(i+4)};

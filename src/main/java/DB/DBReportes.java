@@ -58,11 +58,11 @@ public ArrayList<String> ReporteDescuento(String FechaI, String FechaF) throws S
             Rs = stmt.executeQuery();
             while (Rs.next()) {
                 tabla.add(String.valueOf(Rs.getInt("no_factura")));
-                tabla.add(Rs.getString("fecha"));
-                tabla.add(Rs.getString("nombre_cliente"));
-                tabla.add(Rs.getString("nombre"));
-                if(Rs.getBoolean("consumidor")){tabla.add("C/F");}else{tabla.add("nit");}
-                tabla.add(Rs.getString("total_cond"));
+            tabla.add(Rs.getString("fecha"));
+            tabla.add(Rs.getString("nombre_cliente"));
+            tabla.add(Rs.getString("nombre"));
+            if(Rs.getBoolean("consumidor")){tabla.add("C/F");}else{tabla.add("nit");}
+            tabla.add(Rs.getString("total_cond"));
             }
         } finally {
             CerrarRecursos();
