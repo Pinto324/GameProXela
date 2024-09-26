@@ -10,15 +10,19 @@ package UI.Inventario;
  * @author branp
  */
 public class PrincipalI extends javax.swing.JFrame {
-    String[] datos;
+    private String[] datos;
+    private javax.swing.JFrame login;
     /**
      * Creates new form PrincipalI
      * @param datos
      */
-    public PrincipalI(String[] da) {
+    public PrincipalI(javax.swing.JFrame padre,String[] da) {
         initComponents();
         this.setLocationRelativeTo(null);
         datos = da;
+        login = padre;
+        jLabelNombre.setText(datos[1]);
+        jLabelSucursal.setText(datos[4]);
     }
 
     /**
@@ -33,6 +37,10 @@ public class PrincipalI extends javax.swing.JFrame {
         jPanelFondo = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         BtnSalir = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jLabelNombre = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabelSucursal = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanelRellenar = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -51,6 +59,7 @@ public class PrincipalI extends javax.swing.JFrame {
         jPanelFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         BtnSalir.setBackground(new java.awt.Color(255, 255, 255));
         BtnSalir.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -62,23 +71,27 @@ public class PrincipalI extends javax.swing.JFrame {
                 BtnSalirActionPerformed(evt);
             }
         });
+        jPanel2.add(BtnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 364, 106, 39));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(BtnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BtnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
-        );
+        jLabel9.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(102, 204, 255));
+        jLabel9.setText("Bienvenido");
+        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, 28));
+
+        jLabelNombre.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        jLabelNombre.setForeground(new java.awt.Color(102, 204, 255));
+        jLabelNombre.setText(" ");
+        jPanel2.add(jLabelNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 140, 28));
+
+        jLabel8.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(102, 204, 255));
+        jLabel8.setText("Sucursal:");
+        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 28));
+
+        jLabelSucursal.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        jLabelSucursal.setForeground(new java.awt.Color(102, 204, 255));
+        jLabelSucursal.setText(" ");
+        jPanel2.add(jLabelSucursal, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 70, 28));
 
         jPanelFondo.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 434));
 
@@ -200,7 +213,8 @@ public class PrincipalI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSalirActionPerformed
-
+        login.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_BtnSalirActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
@@ -229,6 +243,10 @@ public class PrincipalI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelNombre;
+    private javax.swing.JLabel jLabelSucursal;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanelFondo;

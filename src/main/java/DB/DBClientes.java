@@ -6,7 +6,10 @@
 package DB;
 
 import Objetos.clientes;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -15,25 +18,6 @@ import java.util.ArrayList;
  */
 public class DBClientes extends DB {
 
-    /*public String[] BuscarPorNit(int Nit) throws SQLException{
-         try {
-            // Inicializar la conexión con PostgreSQL
-            Con = new Conexion("lector", "lectorpass"); // Usuario y contraseña para PostgreSQL
-            Conn = Con.IniciarConexion(); // Inicia la conexión a PostgreSQL
-            // Preparar la consulta usando PreparedStatement
-            String query = "SELECT * FROM Usuarios WHERE id = ?";
-            stmt = Conn.prepareStatement(query);
-            stmt.setInt(1, Nit); // Reemplaza el primer ? con el valor de 'id'
-            Rs = stmt.executeQuery();
-            if (Rs.next()) {
-                return Rs.getInt(3); 
-            } else {
-                return -1;
-            }
-        } finally {
-            CerrarRecursos();
-        }
-    }*/
     public void InsertarCliente(String nombre, int nit, int tarjeta) throws SQLException {
         try {
             Con = new Conexion("modificador", "modpass");
@@ -44,12 +28,18 @@ public class DBClientes extends DB {
             stmt.setString(2, nombre);
             stmt.setInt(3, tarjeta);
             stmt.setInt(4, 0);
+            Date d = new java.sql.Date(System.currentTimeMillis());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String fechaComoString = "";
             if (tarjeta == 0) {
                 stmt.setDate(5, null);
+                fechaComoString = "NULL";
             } else {
                 stmt.setDate(5, new java.sql.Date(System.currentTimeMillis()));
+                fechaComoString = sdf.format(d);
             }
-            Rs = stmt.executeQuery();
+            stmt.executeUpdate();
+            getQuery(stmt, ""+nit, nombre, ""+tarjeta, ""+0,fechaComoString);
         }finally {
             CerrarRecursos();
         }
@@ -69,6 +59,7 @@ public void modificarCliente(int id, String nombre, int nit, boolean tarjeta) th
             stmt.setDate(5, new java.sql.Date(System.currentTimeMillis()));           
         }
         stmt.executeUpdate();
+        
     } finally {
         CerrarRecursos();
     }
@@ -84,7 +75,7 @@ public void modificarCliente(int id, String nombre, int nit, boolean tarjeta) th
             Rs = stmt.executeQuery();
             ArrayList<clientes> Info = new ArrayList();
             while(Rs.next()){
-                clientes dato = new clientes(Rs.getString("id_cliente"),Rs.getString("nit"),Rs.getString("nombre"),Rs.getString("tipo_tarjeta"),Rs.getString("puntos"),"");
+                clientes dato = new clientes(Rs.getString("id_cliente"),Rs.getString("nit"),Rs.getString("nombre"),Rs.getString("tipo_tarjeta"),"","");
                 Info.add(dato);
             }
             CerrarRecursos();
@@ -108,5 +99,16 @@ public void modificarCliente(int id, String nombre, int nit, boolean tarjeta) th
         } finally {
             CerrarRecursos();
         }
+    }
+    
+        public void getQuery(PreparedStatement stmt, String NoFac, String idProd, String cantidad, String precio, String fecha) throws SQLException {
+        String sql = stmt.toString();
+        String query = sql.substring(sql.indexOf(":") + 1).trim();
+        query = query.replace("?", NoFac)
+                                  .replace("?", "'" + idProd + "'")
+                                  .replace("?", cantidad)
+                                  .replace("?", precio)
+                                  .replace("?", "'" +fecha+ "'");
+        System.out.println(query);
     }
 }

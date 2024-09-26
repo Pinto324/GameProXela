@@ -27,8 +27,8 @@ public class Venta extends javax.swing.JDialog {
     private CClientes controlador = new CClientes();
     private CVentas controladorVentas = new CVentas();
     private String[] datos;
-    private ArrayList<productoVenta> infoProducto;
-    private ArrayList<clientes> infoCliente;
+    private ArrayList<productoVenta> infoProducto = new ArrayList();
+    private ArrayList<clientes> infoCliente = new ArrayList();
     private Stack<DetalleVentas> Carrito = new Stack();
     private double PrecioTotal = 0.00;
 
@@ -64,7 +64,7 @@ public class Venta extends javax.swing.JDialog {
         jPanelBuscar = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBoxCF = new javax.swing.JCheckBox();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabelNit = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -175,12 +175,12 @@ public class Venta extends javax.swing.JDialog {
         jLabel6.setText("C/F");
         jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 10, -1, 16));
 
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        jCheckBoxCF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+                jCheckBoxCFActionPerformed(evt);
             }
         });
-        jPanel2.add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 30, -1, -1));
+        jPanel2.add(jCheckBoxCF, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 30, -1, -1));
 
         jComboBox1.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
             public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
@@ -408,16 +408,20 @@ public class Venta extends javax.swing.JDialog {
         funcionamientoBotonBuscar();
     }//GEN-LAST:event_jPanelBuscarMouseClicked
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+    private void jCheckBoxCFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxCFActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    }//GEN-LAST:event_jCheckBoxCFActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jCheckBoxPuntosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxPuntosActionPerformed
-        // TODO add your handling code here:
+        if(jCheckBoxPuntos.isSelected()){
+            jLabel12.setText("Q" + (PrecioTotal - calcularDescuento()));
+        }else{
+            jLabel12.setText("Q" + (PrecioTotal));
+        }
     }//GEN-LAST:event_jCheckBoxPuntosActionPerformed
 
     private void jComboBoxProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxProductoActionPerformed
@@ -546,24 +550,30 @@ public class Venta extends javax.swing.JDialog {
     }
 
     public void FinalizarCompra() {
-        int NoFac = controladorVentas.numeroFactura();
+        int NoFac = controladorVentas.numeroFactura()+1;
         int idCliente = Integer.valueOf(infoCliente.get(jComboBox1.getSelectedIndex()).getId());
         int idCajero = Integer.valueOf(datos[0]);
         int sucursal = Integer.valueOf(datos[4]);
         double total = PrecioTotal;
-        int descuento = jCheckBoxPuntos.isSelected() ? descuento = Integer.valueOf(infoCliente.get(jComboBox1.getSelectedIndex()).getPuntos()) : 0;
-        int totalRedondeado = (int) Math.floor(total);
-        if(descuento > totalRedondeado){
-            descuento = totalRedondeado;
-        }
-        if (controladorVentas.IngreasarVenta(NoFac, idCliente, idCajero, sucursal, total, descuento, Carrito)) {
+        int descuento = calcularDescuento();
+        if (controladorVentas.IngreasarVenta(NoFac, idCliente, idCajero, jCheckBoxCF.isSelected(),sucursal, total, descuento, Carrito)) {
             JOptionPane.showMessageDialog(null, "La venta se realizó correctamente", "aviso", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(null, "Ocurrio un error con unas existencias, repita la venta porfavor", "error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    public int calcularDescuento(){
+        int descuento = jCheckBoxPuntos.isSelected() ? descuento = controlador.traerPuntos(Integer.valueOf(infoCliente.get(jComboBox1.getSelectedIndex()).getId())) : 0;
+        int totalRedondeado = (int) Math.floor(PrecioTotal);
+        if(descuento > totalRedondeado){
+            descuento = totalRedondeado;
+        }
+        return descuento;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBoxCF;
     private javax.swing.JCheckBox jCheckBoxPuntos;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBoxProducto;

@@ -27,7 +27,7 @@ public class CVentas {
         try{return db.numeroFactura();}catch(SQLException e){e.printStackTrace();return -1;}  
     }
     
-    public boolean IngreasarVenta(int NoFac, int idCliente, int idCajero, int sucursal, double total, int descuento, Stack<DetalleVentas> Carrito){
-        return db.InsertarVenta(NoFac, idCliente, idCajero, sucursal,  total,  descuento,Carrito);
+    public boolean IngreasarVenta(int NoFac, int idCliente, int idCajero, boolean cf,int sucursal, double total, int descuento, Stack<DetalleVentas> Carrito){
+        return db.InsertarVenta(NoFac, idCliente, idCajero, cf,sucursal,  total,  descuento,Carrito);
     }
 }

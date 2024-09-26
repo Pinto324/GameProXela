@@ -40,6 +40,10 @@ public class CUsuarios {
         }
         return -3;
     }
+        
+    public boolean IngresarUsuario(String nombre, int rol, String username, String pass, int id_sucursal, int noCaja){
+        try{User.InsertarUsuario(nombre, rol, username, pass, id_sucursal, noCaja);return true;}catch(SQLException ex){ex.printStackTrace();return false;}
+    }
     
     
 }

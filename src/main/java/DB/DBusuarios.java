@@ -7,7 +7,10 @@ package DB;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,8 +21,8 @@ public class DBusuarios extends DB {
     public DBusuarios() {
     }
 
-    public int BuscarRolPorId(int id) throws SQLException{
-         try {
+    public int BuscarRolPorId(int id) throws SQLException {
+        try {
             // Inicializar la conexión con PostgreSQL
             Con = new Conexion("lector", "lectorpass"); // Usuario y contraseña para PostgreSQL
             Conn = Con.IniciarConexion(); // Inicia la conexión a PostgreSQL
@@ -29,7 +32,7 @@ public class DBusuarios extends DB {
             stmt.setInt(1, id); // Reemplaza el primer ? con el valor de 'id'
             Rs = stmt.executeQuery();
             if (Rs.next()) {
-                return Rs.getInt(3); 
+                return Rs.getInt(3);
             } else {
                 return -1;
             }
@@ -37,7 +40,7 @@ public class DBusuarios extends DB {
             CerrarRecursos();
         }
     }
-    
+
     public String[] comprobarContraseña(String usuario, String contra) throws SQLException, NoSuchAlgorithmException {
         try {
             // Inicializamos la conexión (cambiando para que funcione con PostgreSQL)
@@ -58,7 +61,7 @@ public class DBusuarios extends DB {
                 String valorHashCalculadoHex = bytesToHex(valorHashCalculado);
                 String[] info;
                 if (valorHashAlmacenado.equals(valorHashCalculadoHex)) {
-                    info = new String[6]; 
+                    info = new String[6];
                     info[0] = String.valueOf(Rs.getInt("id"));
                     info[1] = Rs.getString("nombre");
                     info[2] = String.valueOf(Rs.getInt("rol"));
@@ -73,7 +76,7 @@ public class DBusuarios extends DB {
                 return info;
             } else {
                 // Si no se encontró el usuario
-                String[]info = new String[1];
+                String[] info = new String[1];
                 info[0] = "-2";
                 return info;
             }
@@ -88,5 +91,48 @@ public class DBusuarios extends DB {
             stringBuilder.append(String.format("%02x", b));
         }
         return stringBuilder.toString();
+    }
+
+public void InsertarUsuario(String nombre, int rol, String username, String pass, int id_sucursal, int noCaja) throws SQLException {
+    try {
+        Con = new Conexion("modificador", "modpass");
+        Conn = Con.IniciarConexion();
+        String query = "SELECT gamerprosc.funcion_insertar_empleados(?,?,?,?,?,?)";
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] valorHashCalculado = digest.digest(pass.getBytes());
+        String valorHashCalculadoHex = bytesToHex(valorHashCalculado);
+        stmt = Conn.prepareStatement(query);
+        stmt.setString(1, nombre);
+        stmt.setShort(2, (short) rol);  // Asegúrate que rol sea el tipo correcto
+        stmt.setString(3, username);
+        stmt.setString(4, valorHashCalculadoHex);
+        stmt.setInt(5, id_sucursal);
+         String nosCaja = "";
+        if (noCaja == -1) {
+            stmt.setNull(6, java.sql.Types.SMALLINT);  // Asegúrate de que la función pueda manejar NULL
+        } else {
+            stmt.setShort(6, (short) noCaja);  // Asegúrate de que noCaja sea del tipo correcto
+            nosCaja = ""+noCaja;
+        }        
+        stmt.executeUpdate(); 
+        getQuery(stmt,nombre,""+rol,username,valorHashCalculadoHex,""+id_sucursal,nosCaja);
+    } catch (NoSuchAlgorithmException ex) {
+        Logger.getLogger(DBusuarios.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        CerrarRecursos();
+    }
+}
+
+
+    public void getQuery(PreparedStatement stmt, String nombre, String rol, String username, String pass, String id_sucursal, String noCaja) throws SQLException {
+        String sql = stmt.toString();
+        String query = sql.substring(sql.indexOf(":") + 1).trim();
+        query = query.replace("?", "'" + nombre + "'")
+                                  .replace("?", rol)
+                                  .replace("?", "'" + username + "'")
+                                  .replace("?", "'" + pass + "'")
+                                  .replace("?", id_sucursal)
+                                  .replace("?", noCaja);
+        System.out.println(query);
     }
 }

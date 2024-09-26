@@ -5,6 +5,7 @@
  */
 package UI;
 import Controladores.CUsuarios;
+import UI.Admin.PrincipalA;
 import UI.Bodega.PrincipalB;
 import UI.Cajero.PrincipalC;
 import UI.Inventario.PrincipalI;
@@ -252,36 +253,39 @@ public class login extends javax.swing.JFrame {
                     switch (Integer.valueOf(info[2])) {
                         //admin
                         case 1:
-                            
+                            PrincipalA admin = new PrincipalA(this,info);
+                            admin.setVisible(true);
+                            this.setVisible(false);
                             break;
                         //Cajero
                         case 2:
-                            PrincipalC Cajero = new PrincipalC(info);
+                            PrincipalC Cajero = new PrincipalC(this,info);
                             Cajero.setVisible(true);
                             this.setVisible(false);
                             break;
                         //Bodega
                         case 3:
-                            PrincipalB Bodega = new PrincipalB(info);
+                            PrincipalB Bodega = new PrincipalB(this,info);
                             Bodega.setVisible(true);
                             this.setVisible(false);
                             break;
                         //Inventario
                         case 4:
-                            PrincipalI Inventario = new PrincipalI(info);
+                            PrincipalI Inventario = new PrincipalI(this,info);
                             Inventario.setVisible(true);
                             this.setVisible(false);
                             break;
                         default:
                             throw new AssertionError();
-                    }
+                    }                    
+                    txtusername.setText("");
+                    txtpassword.setText("");
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
         }else{
             JOptionPane.showMessageDialog(null, "Un campo está vacio", "Error", JOptionPane.INFORMATION_MESSAGE);
         }

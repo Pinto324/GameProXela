@@ -321,6 +321,7 @@ public class ModificarCliente extends javax.swing.JDialog {
             if (controlador.modificarCliente(id, jTextFieldJNombre.getText(), Integer.valueOf(jTextFieldNit.getText()), tarjeta)) {
                 JOptionPane.showMessageDialog(null, "el usuario se modifico correctamente", "aviso", JOptionPane.INFORMATION_MESSAGE);
                 estadoinicial();
+                llenarcombo();
             } else {
                 JOptionPane.showMessageDialog(null, "Ocurrio un error.", "error", JOptionPane.ERROR_MESSAGE);
             }

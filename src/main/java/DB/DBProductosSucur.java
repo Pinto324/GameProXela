@@ -62,6 +62,7 @@ public class DBProductosSucur extends DB {
     }
     
     public ArrayList<productoVenta> informacionRellenarVentas(int sucursal) throws SQLException {
+        ArrayList<productoVenta> info = new ArrayList<>();
         try {
             // Inicializar la conexión con PostgreSQL
             Con = new Conexion("lector", "lectorpass");
@@ -69,12 +70,14 @@ public class DBProductosSucur extends DB {
             String query = "SELECT * FROM gamerprosc.filtrar_rellenarinfo(?)";
             stmt = Conn.prepareStatement(query);
             stmt.setInt(1, sucursal);
-            Rs = stmt.executeQuery();
-            ArrayList<productoVenta> info = new ArrayList<>();
+            Rs = stmt.executeQuery();           
             while (Rs.next()) {
                 productoVenta datos = new productoVenta(Rs.getInt("id_ps"), Rs.getString("nombre"), Rs.getInt("id_producto"),Rs.getInt("stock_estanteria"), Rs.getDouble("precio"));
                 info.add(datos);
             }
+            return info;
+        }catch(SQLException ex){
+            ex.printStackTrace();
             return info;
         } finally {
             CerrarRecursos();
@@ -90,7 +93,7 @@ public class DBProductosSucur extends DB {
             stmt.setInt(1, id);
             stmt.setInt(2, cantidad);
             stmt.setInt(3, pasillo);
-            Rs = stmt.executeQuery();
+            stmt.executeUpdate();
         } finally {
             CerrarRecursos();
         }

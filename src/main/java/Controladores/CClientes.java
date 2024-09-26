@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @author branp
  */
 public class CClientes {
-    DBClientes db = new DBClientes();
+    private DBClientes db = new DBClientes();
     
     public CClientes() {
     }
@@ -40,7 +40,7 @@ public class CClientes {
     }
     
     public ArrayList<clientes> buscarClientes(){
-        try{return db.informacionClientes();}catch(SQLException e){return null;}
+        try{return db.informacionClientes();}catch(SQLException e){e.printStackTrace();return null;}
     }
     public int traerPuntos(int id){
         try{return db.puntosCliente(id);}catch(SQLException e){return 0;}
